@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function OCC
+{
+    params=$@;
+    cd /var/www/html/nextcloud/
+    runuser -s /bin/bash apache -c "./occ $params"
+}
+
+password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
+
+# initialize grants mysql nextcloud database
+/usr/bin/mysql --defaults-file=/root/.my.cnf -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
+/usr/bin/mysql --defaults-file=/root/.my.cnf -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
+/usr/bin/mysql --defaults-file=/root/.my.cnf -e "FLUSH PRIVILEGES"
+
+
+res=`/usr/bin/mysql --defaults-file=/root/.my.cnf -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`;
+
+if [[ $res == '0' ]]; then
+    OCC "maintenance:install --database mysql --database-name nextcloud --database-user nextcloud --database-pass $password --admin-user admin --admin-pass  Nethesis,1234 --data-dir /var/lib/nethserver/nextcloud/"
+
+    OCC "app:enable user_ldap"
+    OCC "ldap:create-empty-config" # create config with empty id
+    OCC "ldap:create-empty-config" # create config with id s01
+    OCC "ldap:delete-config ''" # delte config with empty id
+fi

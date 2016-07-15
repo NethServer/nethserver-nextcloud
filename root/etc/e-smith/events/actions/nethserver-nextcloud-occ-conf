@@ -1,0 +1,85 @@
+#!/usr/bin/perl
+
+use NethServer::SSSD;
+use esmith::NetworksDB;
+
+sub OCC
+{
+    my $params = join(" ", @_);
+    system("cd /var/www/html/nextcloud/;  sudo -u apache php occ $params");
+}
+
+# Update trusted domains
+
+my $ndb = esmith::NetworksDB->open_ro();
+my $cdb = esmith::ConfigDB->open_ro();
+
+my $fqdn = join('.', $cdb->get_value('SystemName'), $cdb->get_value('DomainName'));
+OCC "config:system:set trusted_domains 0 --value=localhost";
+OCC "config:system:set trusted_domains 1 --value=$fqdn";
+
+my $i = 2;
+foreach ($ndb->green(), $ndb->red(), $ndb->orange(), $ndb->blue()) {
+    if ($_->prop("ipaddr")) {
+      OCC "config:system:set trusted_domains $i --value=".$_->prop("ipaddr");
+    }
+    $i++;
+}
+
+
+# Add extra trusted domains
+
+my $trusted_domains  = $cdb->get_prop('nextcloud','TrustedDomains') || '';
+foreach (split(',', $trusted_domains)) {
+    OCC "config:system:set trusted_domains $i --value=".$_;
+    $i++;
+}
+
+
+# Update user authentication
+
+my $sssd = new NethServer::SSSD();
+if ($sssd->isLdap()) {
+    OCC "ldap:set-config s01 ldapHost ".$sssd->host();
+    OCC "ldap:set-config s01 ldapPort ".$sssd->port();
+    OCC "ldap:set-config s01 ldapAgentName cn=libuser,dc=directory,dc=nh";
+    OCC "ldap:set-config s01 ldapAgentPassword ".$sssd->bindPassword();
+    OCC "ldap:set-config s01 ldapBase dc=directory,dc=nh";
+    OCC "ldap:set-config s01 ldapGroupDisplayName cn";
+    OCC "ldap:set-config s01 ldapGroupFilter '(&(|(objectclass=posixGroup)))'";
+    OCC "ldap:set-config s01 ldapGroupFilterObjectclass posixGroup";
+    OCC "ldap:set-config s01 ldapGroupMemberAssocAttr memberUid";
+    OCC "ldap:set-config s01 ldapLoginFilter '(&(|(objectclass=inetOrgPerson))(|(uid=%uid)(|(mail=%uid))))'";
+    OCC "ldap:set-config s01 ldapLoginFilterEmail 1";
+    OCC "ldap:set-config s01 ldapLoginFilterMode 0";
+    OCC "ldap:set-config s01 ldapLoginFilterUsername 1";
+    OCC "ldap:set-config s01 ldapUserDisplayName cn";
+    OCC "ldap:set-config s01 ldapUserFilter '(|(objectclass=inetOrgPerson))'";
+    OCC "ldap:set-config s01 ldapUserFilterObjectclass inetOrgPerson";
+    OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
+    OCC "ldap:set-config s01 ldapConfigurationActive 1";
+} elsif ($sssd->isAD()) {
+    OCC "ldap:set-config s01 ldapHost ldaps://".$sssd->host();
+    OCC "ldap:set-config s01 ldapPort 636";
+    OCC "ldap:set-config s01 ldapAgentName ".$sssd->bindDN();
+    OCC "ldap:set-config s01 ldapAgentPassword '".$sssd->bindPassword()."'";
+    OCC "ldap:set-config s01 ldapBase ".$sssd->baseDN();
+    OCC "ldap:set-config s01 ldapBaseGroups ".$sssd->baseDN();
+    OCC "ldap:set-config s01 ldapBaseUsers ".$sssd->baseDN();
+    OCC "ldap:set-config s01 ldapGroupDisplayName cn";
+    OCC "ldap:set-config s01 ldapGroupFilter ' (&(|(objectclass=group)))'";
+    OCC "ldap:set-config s01 ldapGroupFilterObjectclass group";
+    OCC "ldap:set-config s01 ldapGroupMemberAssocAttr member";
+    OCC "ldap:set-config s01 ldapLoginFilter '(&(&(|(objectclass=person)))(|(samaccountname=%uid)(userPrincipalName=%uid)))'";
+    OCC "ldap:set-config s01 ldapLoginFilterMode 0";
+    OCC "ldap:set-config s01 ldapLoginFilterUsername 1";
+    OCC "ldap:set-config s01 ldapUserDisplayName givenName";
+    OCC "ldap:set-config s01 ldapUserFilter '(&(|(objectclass=person)))'";
+    OCC "ldap:set-config s01 ldapUserFilterObjectclass person";
+    OCC "ldap:set-config s01 turnOffCertCheck 1";
+    OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
+    OCC "ldap:set-config s01 ldapConfigurationActive 1";
+} else {
+    # SSSD provider not configured, nothing to do
+    exit 0;
+}
