@@ -24,4 +24,6 @@ if [[ $res == '0' ]]; then
     OCC "ldap:create-empty-config" # create config with empty id
     OCC "ldap:create-empty-config" # create config with id s01
     OCC "ldap:delete-config ''" # delte config with empty id
+else
+    OCC "upgrade"
 fi
