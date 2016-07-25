@@ -26,4 +26,8 @@ if [[ $res == '0' ]]; then
     OCC "ldap:delete-config ''" # delte config with empty id
 else
     OCC "upgrade"
+    # Catch 'Nextcloud is already latest version' message
+    if [ $? -eq 3 ]; then
+        exit 0
+    fi
 fi
