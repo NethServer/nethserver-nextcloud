@@ -42,14 +42,3 @@ event_actions("nethserver-nextcloud-save", qw(
   nethserver-nextcloud-occ-conf 30
 ));
 
-event_actions("nethserver-sssd-save", qw(
-  nethserver-nextcloud-occ-conf 80
-));
-
-event_actions("nethserver-directory-update", qw(
-  nethserver-nextcloud-occ-conf 80
-));
-
-event_actions("nethserver-dc-save", qw(
-  nethserver-nextcloud-occ-conf 80
-));
