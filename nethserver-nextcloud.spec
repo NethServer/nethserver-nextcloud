@@ -34,8 +34,7 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 %defattr(-,root,root)
 %doc COPYING
 %dir %{_nseventsdir}/%{name}-update
-#%dir %attr(0775,apache,apache) /var/lib/nethserver/nextcloud
-#%attr (0775, apache, apache) /var/lib/nethserver/nextcloud
+%config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_nethserver_nextcloud
 
 
 %changelog

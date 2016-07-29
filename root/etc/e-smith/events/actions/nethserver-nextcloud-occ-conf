@@ -6,7 +6,7 @@ use esmith::NetworksDB;
 sub OCC
 {
     my $params = join(" ", @_);
-    system("cd /var/www/html/nextcloud/;  sudo -u apache php occ $params");
+    system("cd /var/www/html/nextcloud/;TERM=dumb sudo -u apache php occ $params");
 }
 
 # Update trusted domains

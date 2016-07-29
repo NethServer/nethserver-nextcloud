@@ -4,7 +4,7 @@ function OCC
 {
     params=$@;
     cd /var/www/html/nextcloud/
-    runuser -s /bin/bash apache -c "./occ $params"
+    TERM=dumb runuser -s /bin/bash apache -c "./occ $params"
 }
 
 password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
