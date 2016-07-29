@@ -27,7 +27,7 @@ perl createlinks
 rm -rf %{buildroot}
 (cd root; find . -depth -print | cpio -dump %{buildroot})
 mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
-%{genfilelist} %{buildroot} --dir /var/lib/nethserver/nextcloud 'attr(0775,apache,apache)' > %{name}-%{version}-filelist
+%{genfilelist} %{buildroot} --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' > %{name}-%{version}-filelist
 
 
 %files -f %{name}-%{version}-filelist
