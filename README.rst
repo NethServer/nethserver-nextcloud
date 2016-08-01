@@ -8,6 +8,22 @@ and nethserver-directory.
 If nethserver-dc or nethserver-directory are installed, the nethserver-nextcloud-save
 event will automatically enable all local users.
 
+The package does the following:
+
+* create ``nextcloud`` mysql database
+* create default database credentials: user `nextcloud` and password stored in ``/var/lib/nethserver/secrets/nextcloud``
+* add trusted domains to use with web access
+* create default credentials for web login: user `"admin"` and password `"Nethesis,1234"`
+* set english as the default language
+* set the user data directory as ``/var/lib/nethserver/nextcloud``
+
+The configuration is stored inside the ``configuration`` db, under the ``nextcloud`` key.
+
+Properties:
+
+* ``TrustedDomains``: list of trusted domains added to Nextcloud config file
+
+
 Admin user
 ==========
 
@@ -18,18 +34,13 @@ After installation the application is accesible using the following credentials:
 
 Please, remember to change the default password after the first login!
 
-Trusted domains
-===============
+Backup
+======
 
-The Nexcloud application is accessible using the following URLs:
+The ownCloud backup includes the configuration file and all data of the users: ::
 
-* https://localhost/nextcloud
-* https://<FQDN>/nextcloud where <FQDN> is the name of the server
-* https://<IP>/nextcloud where <IP> is any static IP address of the server
-* Any additional name or IP added to the TrustedDomains prop
+ /var/lib/nethserver/nextcloud
+ /var/www/html/nextcloud/config/config.php
 
+The database is automatically saved by ``nethserver-mysql``.
 
-Add extra IPs and name ::
-
-    config setprop TrustedDomains nextcloud.nethserver.org,10.10.10.1
-    signal-event nethserver-nextcloud-save
