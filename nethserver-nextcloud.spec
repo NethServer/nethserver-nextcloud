@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.0.0
+Version: 1.0.1
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -38,6 +38,9 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 
 %changelog
+* Wed Aug 24 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.1-1
+- Nextcloud: trusted domains not updated on IP change - NethServer/dev#5076
+
 * Mon Aug 01 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.0-1
 - First Nextcloud release - NethServer/dev#5055
 
