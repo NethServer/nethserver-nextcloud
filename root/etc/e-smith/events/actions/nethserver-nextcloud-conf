@@ -25,6 +25,10 @@ if [[ $res == '0' ]]; then
     OCC "ldap:create-empty-config" # create config with id s01
     OCC "ldap:delete-config ''" # delte config with empty id
 else
+    # to satisfy code integrity check
+    if [ -f /var/www/html/nextcloud/.htaccess.rpmsave ]; then
+        rm -f /var/www/html/nextcloud/.htaccess.rpmsave
+    fi
     OCC "maintenance:mode --on"
     OCC "upgrade"
     OCC "maintenance:mode --off"
