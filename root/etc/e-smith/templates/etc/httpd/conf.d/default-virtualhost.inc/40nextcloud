@@ -1,0 +1,6 @@
+#
+# 40nextcloud
+#
+RewriteEngine On
+RewriteCond %\{HTTPS\} !=on
+RewriteRule ^/nextcloud(/.*)?$  https://%\{HTTP_HOST\}/nextcloud\$1  [L,R=301]

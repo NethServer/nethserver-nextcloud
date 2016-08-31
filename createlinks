@@ -32,6 +32,7 @@ event_actions("nethserver-nextcloud-update", qw(
 
 event_templates("nethserver-nextcloud-update", qw(
   /etc/httpd/conf.d/nethserver.conf
+  /etc/httpd/conf.d/default-virtualhost.inc
 ));
 
 event_services("nethserver-nextcloud-update", qw(
