@@ -67,7 +67,7 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapBaseGroups ".$sssd->baseDN();
     OCC "ldap:set-config s01 ldapBaseUsers ".$sssd->baseDN();
     OCC "ldap:set-config s01 ldapGroupDisplayName cn";
-    OCC "ldap:set-config s01 ldapGroupFilter ' (&(|(objectclass=group)))'";
+    OCC "ldap:set-config s01 ldapGroupFilter ' (&(objectClass=group)(groupType:1.2.840.113556.1.4.803:=2))'";
     OCC "ldap:set-config s01 ldapGroupFilterObjectclass group";
     OCC "ldap:set-config s01 ldapGroupMemberAssocAttr member";
     OCC "ldap:set-config s01 ldapLoginFilter '(&(&(|(objectclass=person)))(|(samaccountname=%uid)(userPrincipalName=%uid)))'";
