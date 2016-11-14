@@ -42,7 +42,7 @@ my $sssd = new NethServer::SSSD();
 if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapHost ".$sssd->host();
     OCC "ldap:set-config s01 ldapPort ".$sssd->port();
-    OCC "ldap:set-config s01 ldapAgentName cn=libuser,dc=directory,dc=nh";
+    OCC "ldap:set-config s01 ldapAgentName ".$sssd->bindDN();
     OCC "ldap:set-config s01 ldapAgentPassword ".$sssd->bindPassword();
     OCC "ldap:set-config s01 ldapBase dc=directory,dc=nh";
     OCC "ldap:set-config s01 ldapGroupDisplayName cn";
