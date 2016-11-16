@@ -9,7 +9,7 @@ URL: %{url_prefix}/%{name}
 
 BuildRequires: nethserver-devtools
 
-Requires: nextcloud
+Requires: nextcloud>=10.0.1
 Requires: nethserver-httpd, nethserver-mysql
 
 %description
