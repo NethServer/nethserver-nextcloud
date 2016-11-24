@@ -59,8 +59,8 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
     OCC "ldap:set-config s01 ldapConfigurationActive 1";
 } elsif ($sssd->isAD()) {
-    OCC "ldap:set-config s01 ldapHost ldaps://".$sssd->host();
-    OCC "ldap:set-config s01 ldapPort 636";
+    OCC "ldap:set-config s01 ldapHost '" . $sssd->ldapURI() . "'";
+    OCC "ldap:set-config s01 ldapPort " . $sssd->port();
     OCC "ldap:set-config s01 ldapAgentName ".$sssd->bindDN();
     OCC "ldap:set-config s01 ldapAgentPassword '".$sssd->bindPassword()."'";
     OCC "ldap:set-config s01 ldapBase ".$sssd->baseDN();
