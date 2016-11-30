@@ -60,6 +60,7 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapLoginFilterMode 0";
     OCC "ldap:set-config s01 ldapLoginFilterUsername 1";
     OCC "ldap:set-config s01 ldapUserDisplayName cn";
+    OCC "ldap:set-config s01 ldapUserDisplayName2 uid";
     OCC "ldap:set-config s01 ldapUserFilter '(|(objectclass=inetOrgPerson))'";
     OCC "ldap:set-config s01 ldapUserFilterObjectclass inetOrgPerson";
     OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
@@ -84,7 +85,8 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapLoginFilter '(&(&(|(objectclass=person)))(|(samaccountname=%uid)(userPrincipalName=%uid)))'";
     OCC "ldap:set-config s01 ldapLoginFilterMode 0";
     OCC "ldap:set-config s01 ldapLoginFilterUsername 1";
-    OCC "ldap:set-config s01 ldapUserDisplayName givenName";
+    OCC "ldap:set-config s01 ldapUserDisplayName displayName";
+    OCC "ldap:set-config s01 ldapUserDisplayName2 samaccountname";
     OCC "ldap:set-config s01 ldapUserFilter '(&(|(objectclass=person)))'";
     OCC "ldap:set-config s01 ldapUserFilterObjectclass person";
     OCC "ldap:set-config s01 turnOffCertCheck 1";
