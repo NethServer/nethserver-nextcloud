@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 
+use strict;
 use NethServer::SSSD;
 use esmith::NetworksDB;
+use esmith::ConfigDB;
 
 sub OCC
 {
@@ -39,12 +41,16 @@ foreach (split(',', $trusted_domains)) {
 # Update user authentication
 
 my $sssd = new NethServer::SSSD();
+my $quotedBindPass = $sssd->bindPassword(); $quotedBindPass =~ s/\'/\\'/g;
 if ($sssd->isLdap()) {
-    OCC "ldap:set-config s01 ldapHost ".$sssd->host();
+    OCC "ldap:set-config s01 ldapHost '" . $sssd->ldapURI() . "'";
     OCC "ldap:set-config s01 ldapPort ".$sssd->port();
-    OCC "ldap:set-config s01 ldapAgentName ".$sssd->bindDN();
-    OCC "ldap:set-config s01 ldapAgentPassword ".$sssd->bindPassword();
-    OCC "ldap:set-config s01 ldapBase dc=directory,dc=nh";
+    OCC "ldap:set-config s01 ldapAgentName '" . $sssd->bindDN() . "'";
+    OCC "ldap:set-config s01 ldapAgentPassword '$quotedBindPass'";
+    OCC "ldap:set-config s01 ldapBase ".$sssd->baseDN();
+    OCC "ldap:set-config s01 ldapBaseGroups ".$sssd->groupDN();
+    OCC "ldap:set-config s01 ldapBaseUsers ".$sssd->userDN();
+
     OCC "ldap:set-config s01 ldapGroupDisplayName cn";
     OCC "ldap:set-config s01 ldapGroupFilter '(&(|(objectclass=posixGroup)))'";
     OCC "ldap:set-config s01 ldapGroupFilterObjectclass posixGroup";
@@ -54,18 +60,24 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapLoginFilterMode 0";
     OCC "ldap:set-config s01 ldapLoginFilterUsername 1";
     OCC "ldap:set-config s01 ldapUserDisplayName cn";
+    OCC "ldap:set-config s01 ldapUserDisplayName2 uid";
     OCC "ldap:set-config s01 ldapUserFilter '(|(objectclass=inetOrgPerson))'";
     OCC "ldap:set-config s01 ldapUserFilterObjectclass inetOrgPerson";
     OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
     OCC "ldap:set-config s01 ldapConfigurationActive 1";
+    OCC "ldap:set-config s01 turnOffCertCheck 1";
+    if($sssd->startTls()) {
+        OCC "ldap:set-config s01 ldapTLS 1"; # enable starttls on remote ldap providers
+    }
 } elsif ($sssd->isAD()) {
-    OCC "ldap:set-config s01 ldapHost ldaps://".$sssd->host();
-    OCC "ldap:set-config s01 ldapPort 636";
-    OCC "ldap:set-config s01 ldapAgentName ".$sssd->bindDN();
-    OCC "ldap:set-config s01 ldapAgentPassword '".$sssd->bindPassword()."'";
+    OCC "ldap:set-config s01 ldapHost '" . $sssd->ldapURI() . "'";
+    OCC "ldap:set-config s01 ldapPort ".$sssd->port();
+    OCC "ldap:set-config s01 ldapAgentName '" . $sssd->bindDN() . "'";
+    OCC "ldap:set-config s01 ldapAgentPassword '$quotedBindPass'";
     OCC "ldap:set-config s01 ldapBase ".$sssd->baseDN();
-    OCC "ldap:set-config s01 ldapBaseGroups ".$sssd->baseDN();
-    OCC "ldap:set-config s01 ldapBaseUsers ".$sssd->baseDN();
+    OCC "ldap:set-config s01 ldapBaseGroups ".$sssd->groupDN();
+    OCC "ldap:set-config s01 ldapBaseUsers ".$sssd->userDN();
+
     OCC "ldap:set-config s01 ldapGroupDisplayName cn";
     OCC "ldap:set-config s01 ldapGroupFilter ' (&(objectClass=group)(groupType:1.2.840.113556.1.4.803:=2))'";
     OCC "ldap:set-config s01 ldapGroupFilterObjectclass group";
@@ -73,12 +85,14 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapLoginFilter '(&(&(|(objectclass=person)))(|(samaccountname=%uid)(userPrincipalName=%uid)))'";
     OCC "ldap:set-config s01 ldapLoginFilterMode 0";
     OCC "ldap:set-config s01 ldapLoginFilterUsername 1";
-    OCC "ldap:set-config s01 ldapUserDisplayName givenName";
+    OCC "ldap:set-config s01 ldapUserDisplayName displayName";
+    OCC "ldap:set-config s01 ldapUserDisplayName2 samaccountname";
     OCC "ldap:set-config s01 ldapUserFilter '(&(|(objectclass=person)))'";
     OCC "ldap:set-config s01 ldapUserFilterObjectclass person";
     OCC "ldap:set-config s01 turnOffCertCheck 1";
     OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
     OCC "ldap:set-config s01 ldapConfigurationActive 1";
+    OCC "ldap:set-config s01 ldapTLS 0"; # always disable starttls, AD does not support it
 } else {
     # SSSD provider not configured, nothing to do
     exit 0;
