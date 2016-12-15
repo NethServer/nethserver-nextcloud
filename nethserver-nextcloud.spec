@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.0.3
+Version: 1.0.4
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -38,6 +38,10 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 
 %changelog
+* Thu Dec 15 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.4-1
+- Enable LDAPs protocol on Active Directory clients - NethServer/dev#5161
+- Nextcloud: upgrade to version 10.0.2 - NethServer/dev#5155
+
 * Mon Nov 14 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.3-1
 - LDAP account with read-only privileges - NethServer/dev#5145
 - Fix https redirect
