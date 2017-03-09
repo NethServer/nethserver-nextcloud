@@ -46,4 +46,3 @@ event_actions("nethserver-nextcloud-save", qw(
 event_actions("interface-update", qw(
   nethserver-nextcloud-occ-conf 50
 ));
-

@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# Copyright (C) 2017 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
+#
+# This script migrates data and users from ownCloud to Nextcloud
+#
+
+mysql -e "select * from owncloud.users" &> /dev/null
+if [ $? -gt 0 ]; then # no migration needed
+    exit 0
+fi
+
+# Reconfigure Nexctloud
+signal-event nethserver-nextcloud-update
+
+for user_simple in `mysql owncloud -B -e "select uid from users;"`
+do
+    dir="/var/www/html/owncloud/data/$user_simple"
+    if [ -d $dir ]; then
+        echo "Nextcloud: migrating built-in user: $user_simple"
+        /bin/su  apache -s /bin/bash -c "OC_PASS=Nethesis,1234 /var/www/html/nextcloud/occ user:add -n --password-from-env $user_simple"
+        mv $dir /var/lib/nethserver/nextcloud/$user_simple
+    fi 
+done
+
+hostname=$(hostname -d)
+for user_ldap in `mysql owncloud -B -e "select owncloud_name from ldap_user_mapping"`
+do
+    dir="/var/www/html/owncloud/data/$user_ldap"
+    if [ -d $dir ]; then
+        echo "Nextcloud: migrating LDAP user: $user_ldap@$hostname"
+        mv $dir /var/lib/nethserver/nextcloud/$user_ldap@$hostname
+    fi
+done
+
+rm -rf /var/www/html/owncloud/
