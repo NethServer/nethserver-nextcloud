@@ -3,6 +3,7 @@
 function OCC
 {
     params=$@;
+    source /opt/rh/rh-php56/enable
     cd /var/www/html/nextcloud/
     TERM=dumb runuser -s /bin/bash apache -c "./occ $params"
 }
