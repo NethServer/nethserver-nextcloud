@@ -4,7 +4,7 @@ function OCC
 {
     params=$@;
     source /opt/rh/rh-php56/enable
-    cd /var/www/html/nextcloud/
+    cd /usr/share/nextcloud/
     TERM=dumb runuser -s /bin/bash apache -c "./occ $params"
 }
 
@@ -27,8 +27,8 @@ if [[ $res == '0' ]]; then
     OCC "ldap:delete-config ''" # delte config with empty id
 else
     # to satisfy code integrity check
-    if [ -f /var/www/html/nextcloud/.htaccess.rpmsave ]; then
-        rm -f /var/www/html/nextcloud/.htaccess.rpmsave
+    if [ -f /usr/share/nextcloud/.htaccess.rpmsave ]; then
+        rm -f /usr/share/nextcloud/.htaccess.rpmsave
     fi
     OCC "maintenance:mode --on"
     OCC "upgrade"
