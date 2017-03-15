@@ -33,6 +33,7 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 %files -f %{name}-%{version}-filelist
 %defattr(-,root,root)
 %doc COPYING
+%doc owncloud-migrate
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_nethserver_nextcloud
 
