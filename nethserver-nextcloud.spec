@@ -9,8 +9,9 @@ URL: %{url_prefix}/%{name}
 
 BuildRequires: nethserver-devtools
 
-Requires: nextcloud >= 10.0.2
+Requires: nextcloud >= 11.0.2
 Requires: nethserver-httpd, nethserver-mysql
+Requires: nethserver-rh-php56-php-fpm
 
 %description
 NethServer Nextcloud files and configuration.
