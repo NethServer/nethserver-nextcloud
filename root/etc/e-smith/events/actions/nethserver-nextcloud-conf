@@ -15,6 +15,11 @@ password=`perl -e "use NethServer::Password; print NethServer::Password::store('
 /usr/bin/mysql --defaults-file=/root/.my.cnf -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
 /usr/bin/mysql --defaults-file=/root/.my.cnf -e "FLUSH PRIVILEGES"
 
+# check if we are migrating from release 10 to 11
+if [ -f /var/www/html/nextcloud/config/config.php ]; then
+    mv /var/www/html/nextcloud/config/config.php /usr/share/nextcloud/config/config.php
+    rm -rf /var/www/html/nextcloud/
+fi
 
 res=`/usr/bin/mysql --defaults-file=/root/.my.cnf -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`;
 
