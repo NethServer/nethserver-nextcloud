@@ -12,6 +12,7 @@ BuildRequires: nethserver-devtools
 Requires: nextcloud >= 11.0.2
 Requires: nethserver-httpd, nethserver-mysql
 Requires: nethserver-rh-php56-php-fpm
+Requires: sclo-php56-php-smbclient samba-client
 
 %description
 NethServer Nextcloud files and configuration.
