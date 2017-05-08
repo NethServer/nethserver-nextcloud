@@ -28,8 +28,7 @@ if [ $? -gt 0 ]; then # no migration needed
     exit 0
 fi
 
-# Reconfigure Nexctloud
-signal-event nethserver-nextcloud-update
+su - apache -s /bin/bash -c "source /opt/rh/rh-php56/enable; cd /usr/share/nextcloud/; php occ maintenance:mode --on"
 
 for user_simple in `mysql owncloud -B -e "select uid from users;"`
 do
@@ -41,14 +40,24 @@ do
     fi 
 done
 
-hostname=$(hostname -d)
-for user_ldap in `mysql owncloud -B -e "select owncloud_name from ldap_user_mapping"`
+for user_ldap in `mysql owncloud -N -B -e "select owncloud_name from ldap_user_mapping"`
 do
+    dn=$(mysql owncloud -N -B -e "select ldap_dn from ldap_user_mapping where owncloud_name='$user_ldap'")
+    dst=$(mysql nextcloud -N -B -e "select owncloud_name from oc_ldap_user_mapping where ldap_dn like 'cn=$user_ldap,%'")
     dir="/var/www/html/owncloud/data/$user_ldap"
+    dst_dir="/var/lib/nethserver/nextcloud/$dst"
     if [ -d $dir ]; then
-        echo "Nextcloud: migrating LDAP user: $user_ldap@$hostname"
-        mv $dir /var/lib/nethserver/nextcloud/$user_ldap@$hostname
+        echo "[NOTICE] Nextcloud: migrating LDAP user: $user_ldap"
+        if [ ! -d $dst_dir ]; then
+            mkdir $dst_dir
+        else 
+            echo "[WARNING] Creating backup for user $user_ldap"
+            mv $dst_dir "$dst_dir".old
+        fi
+        mv $dir $dst_dir
+        chown -R apache:apache $dst_dir
     fi
 done
 
-rm -rf /var/www/html/owncloud/
+su - apache -s /bin/bash -c "source /opt/rh/rh-php56/enable; cd /usr/share/nextcloud/; php occ files:scan --all"
+su - apache -s /bin/bash -c "source /opt/rh/rh-php56/enable; cd /usr/share/nextcloud/; php occ maintenance:mode --off"
