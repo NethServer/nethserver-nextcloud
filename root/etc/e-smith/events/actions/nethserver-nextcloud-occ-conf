@@ -41,7 +41,9 @@ foreach (split(',', $trusted_domains)) {
 # Update user authentication
 
 my $sssd = new NethServer::SSSD();
-my $quotedBindPass = $sssd->bindPassword(); $quotedBindPass =~ s/\'/\\'/g;
+my $quotedBindPass = $sssd->bindPassword();
+$quotedBindPass =~ s/\'/\\'/g;
+$quotedBindPass =~ s/\$/\\\$/g;
 if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapHost '" . $sssd->ldapURI() . "'";
     OCC "ldap:set-config s01 ldapPort ".$sssd->port();
