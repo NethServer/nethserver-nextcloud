@@ -41,7 +41,9 @@ foreach (split(',', $trusted_domains)) {
 # Update user authentication
 
 my $sssd = new NethServer::SSSD();
-my $quotedBindPass = $sssd->bindPassword(); $quotedBindPass =~ s/\'/\\'/g;
+my $quotedBindPass = $sssd->bindPassword();
+$quotedBindPass =~ s/\'/\\'/g;
+$quotedBindPass =~ s/\$/\\\$/g;
 if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapHost '" . $sssd->ldapURI() . "'";
     OCC "ldap:set-config s01 ldapPort ".$sssd->port();
@@ -63,6 +65,7 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapUserDisplayName2 uid";
     OCC "ldap:set-config s01 ldapUserFilter '(|(objectclass=inetOrgPerson))'";
     OCC "ldap:set-config s01 ldapUserFilterObjectclass inetOrgPerson";
+    OCC "ldap:set-config s01 ldapEmailAttribute mail";
     OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
     OCC "ldap:set-config s01 ldapConfigurationActive 1";
     OCC "ldap:set-config s01 turnOffCertCheck 1";
@@ -82,13 +85,14 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapGroupFilter ' (&(objectClass=group)(groupType:1.2.840.113556.1.4.803:=2))'";
     OCC "ldap:set-config s01 ldapGroupFilterObjectclass group";
     OCC "ldap:set-config s01 ldapGroupMemberAssocAttr member";
-    OCC "ldap:set-config s01 ldapLoginFilter '(&(&(|(objectclass=person)))(|(samaccountname=%uid)(userPrincipalName=%uid)))'";
+    OCC "ldap:set-config s01 ldapLoginFilter '(&(&(|(objectclass=person)))(|(sAMAccountName=%uid)(userPrincipalName=%uid)))'";
     OCC "ldap:set-config s01 ldapLoginFilterMode 0";
     OCC "ldap:set-config s01 ldapLoginFilterUsername 1";
     OCC "ldap:set-config s01 ldapUserDisplayName displayName";
-    OCC "ldap:set-config s01 ldapUserDisplayName2 samaccountname";
+    OCC "ldap:set-config s01 ldapUserDisplayName2 sAMAccountName";
     OCC "ldap:set-config s01 ldapUserFilter '(&(|(objectclass=person)))'";
     OCC "ldap:set-config s01 ldapUserFilterObjectclass person";
+    OCC "ldap:set-config s01 ldapEmailAttribute userPrincipalname";
     OCC "ldap:set-config s01 turnOffCertCheck 1";
     OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
     OCC "ldap:set-config s01 ldapConfigurationActive 1";
