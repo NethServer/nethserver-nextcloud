@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.1.2
+Version: 1.1.3
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -41,6 +41,10 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 
 %changelog
+* Mon May 22 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.3-1
+- Nextcloud: update to 11.0.3 - NethServer/dev#5285
+- Default userPrincipalName is not an email address - Bug NethServer/dev#5284
+
 * Wed May 10 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.2-1
 - Requirements not met for Nextcloud's External Storage App using CIFS/SMB - Bug NethServer/dev#5276
 - Upgrade from NS 6 via backup and restore - NethServer/dev#5234
