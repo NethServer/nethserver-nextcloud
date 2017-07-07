@@ -1,0 +1,9 @@
+/var/lib/nethserver/nextcloud/nextcloud.log {
+  compress
+  delaycompress
+  missingok
+  notifempty
+  su apache apache
+  create 640 apache apache
+}
+
