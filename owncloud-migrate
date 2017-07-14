@@ -47,13 +47,11 @@ do
     dir="/var/www/html/owncloud/data/$user_ldap"
     dst_dir="/var/lib/nethserver/nextcloud/$dst"
     if [ -d $dir ]; then
-        echo "[NOTICE] Nextcloud: migrating LDAP user: $user_ldap"
-        if [ ! -d $dst_dir ]; then
-            mkdir $dst_dir
-        else 
-            echo "[WARNING] Creating backup for user $user_ldap"
+        if [[ -d $dst_dir ]]; then
+            echo "[WARNING] Destination already exists for $user_ldap: existing directory renamed to ${dst_dir}.old"
             mv $dst_dir "$dst_dir".old
         fi
+        echo "[NOTICE] Nextcloud: migrating LDAP user: $user_ldap"
         mv $dir $dst_dir
         chown -R apache:apache $dst_dir
     fi
