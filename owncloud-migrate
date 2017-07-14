@@ -43,7 +43,7 @@ done
 for user_ldap in `mysql owncloud -N -B -e "select owncloud_name from ldap_user_mapping"`
 do
     dn=$(mysql owncloud -N -B -e "select ldap_dn from ldap_user_mapping where owncloud_name='$user_ldap'")
-    dst=$(mysql nextcloud -N -B -e "select owncloud_name from oc_ldap_user_mapping where ldap_dn like 'cn=$user_ldap,%'")
+    dst=$(mysql nextcloud -N -B -e "select owncloud_name from oc_ldap_user_mapping where (ldap_dn like 'cn=$user_ldap,%' or ldap_dn like 'uid=$user_ldap,%')")
     dir="/var/www/html/owncloud/data/$user_ldap"
     dst_dir="/var/lib/nethserver/nextcloud/$dst"
     if [ -d $dir ]; then
