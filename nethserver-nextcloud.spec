@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.1.5
+Version: 1.1.6
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -41,6 +41,9 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 
 %changelog
+* Mon Jul 24 2017 Davide Principi <davide.principi@nethesis.it> - 1.1.6-1
+- ownCloud migration script fixes
+
 * Wed Jul 12 2017 Davide Principi <davide.principi@nethesis.it> - 1.1.5-1
 - Nextcloud: add logrotate - NethServer/dev#5329
 
