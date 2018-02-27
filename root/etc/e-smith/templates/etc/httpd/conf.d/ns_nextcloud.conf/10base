@@ -1,0 +1,51 @@
+{
+    my $vhost = $nextcloud{'VirtualHost'} || '';
+
+
+    my $config = '
+  Alias / "/usr/share/nextcloud/"
+  <Directory "/usr/share/nextcloud">
+    Options +FollowSymLinks
+    AllowOverride All
+    Require all granted
+
+    <IfModule mod_dav.c>
+          Dav off
+    </IfModule>
+
+    <FilesMatch \.php$>
+          SetHandler "proxy:fcgi://127.0.0.1:9001"
+    </FilesMatch>
+
+    SetEnv HOME /usr/share/nextcloud
+    SetEnv HTTP_HOME /usr/share/nextcloud
+    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+  </Directory>
+
+  <Directory "/usr/share/nextcloud/data/">
+      # just in case if .htaccess gets disabled
+      Require all denied
+  </Directory>';
+
+    if ($vhost ne '') {
+        $OUT .= "<VirtualHost *:80>\n";
+        $OUT .= "  ServerName $vhost\n";
+        $OUT .= "  Redirect / https://$vhost/\n";
+        $OUT .= "</VirtualHost>\n\n";
+
+        $OUT .= "<VirtualHost *:443>\n";
+        $OUT .= "  ServerName $vhost\n";
+        $OUT .= "  SSLEngine on\n";
+        $OUT .= "  SSLCertificateFile /etc/pki/tls/certs/localhost.crt\n";
+        $OUT .= "  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\n";
+        if ($pki{ChainFile} && -e $pki{ChainFile}) {
+            $OUT .= "  SSLCertificateChainFile ".$pki{ChainFile}."\n";
+        }
+        $OUT .= "  SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!SEED:!IDEA\n\n";
+        $OUT .= "  RewriteCond %\{HTTPS\} !=on\n";
+        $OUT .= "  RewriteRule (.*) https://%\{SERVER_NAME\}%\{REQUEST_URI\} [END,QSA,R=permanent]\n";
+        $OUT .= $config;
+        $OUT .= "\n</VirtualHost>\n";
+    }
+
+}
