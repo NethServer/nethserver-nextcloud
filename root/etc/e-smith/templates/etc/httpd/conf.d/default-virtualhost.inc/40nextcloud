@@ -4,3 +4,6 @@
 RewriteEngine On
 RewriteCond %\{HTTPS\} !=on
 RewriteRule ^/nextcloud(/.*)?$  https://%\{HTTP_HOST\}/nextcloud$1  [L,R=301]
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=15552000"
+</IfModule>
