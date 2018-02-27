@@ -28,7 +28,7 @@ if [ $? -gt 0 ]; then # no migration needed
     exit 0
 fi
 
-su - apache -s /bin/bash -c "source /opt/rh/rh-php56/enable; cd /usr/share/nextcloud/; php occ maintenance:mode --on"
+su - apache -s /bin/bash -c "source /opt/rh/rh-php71/enable; cd /usr/share/nextcloud/; php occ maintenance:mode --on"
 
 for user_simple in `mysql owncloud -B -e "select uid from users;"`
 do
@@ -57,5 +57,5 @@ do
     fi
 done
 
-su - apache -s /bin/bash -c "source /opt/rh/rh-php56/enable; cd /usr/share/nextcloud/; php occ files:scan --all"
-su - apache -s /bin/bash -c "source /opt/rh/rh-php56/enable; cd /usr/share/nextcloud/; php occ maintenance:mode --off"
+su - apache -s /bin/bash -c "source /opt/rh/rh-php71/enable; cd /usr/share/nextcloud/; php occ files:scan --all"
+su - apache -s /bin/bash -c "source /opt/rh/rh-php71/enable; cd /usr/share/nextcloud/; php occ maintenance:mode --off"
