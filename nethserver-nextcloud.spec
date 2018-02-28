@@ -18,6 +18,7 @@ Requires: rh-php71-php-pdo_mysql
 Requires: rh-php71-php-gd
 Requires: rh-php71-php-mbstring
 Requires: rh-php71-php-ldap
+Requires: rh-php71-php-opcache
 
 %description
 NethServer Nextcloud files and configuration.
