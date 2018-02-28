@@ -10,9 +10,10 @@ URL: %{url_prefix}/%{name}
 BuildRequires: nethserver-devtools
 
 Requires: nextcloud >= 13.0.0
-Requires: nethserver-httpd, nethserver-mysql
+Requires: nethserver-httpd, nethserver-mysql, nethserver-memcached
 Requires: nethserver-rh-php71-php-fpm
 Requires: sclo-php71-php-smbclient samba-client
+Requires: sclo-php71-php-pecl-memcached
 Requires: rh-php71-php-pdo
 Requires: rh-php71-php-pdo_mysql
 Requires: rh-php71-php-gd
