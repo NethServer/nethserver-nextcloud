@@ -9,10 +9,14 @@ URL: %{url_prefix}/%{name}
 
 BuildRequires: nethserver-devtools
 
-Requires: nextcloud >= 12.0.5
-Requires: nethserver-httpd, nethserver-mysql
-Requires: nethserver-rh-php56-php-fpm
-Requires: sclo-php56-php-smbclient samba-client
+Requires: nextcloud >= 13.0.0
+Requires: nethserver-httpd
+Requires: nethserver-mysql
+Requires: nethserver-rh-php71-php-fpm
+Requires: samba-client
+Requires: sclo-php71-php-smbclient
+Requires: rh-php71-php-opcache
+Requires: rh-php71-php-pecl-apcu
 
 %description
 NethServer Nextcloud files and configuration.
@@ -35,7 +39,6 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 %files -f %{name}-%{version}-filelist
 %defattr(-,root,root)
 %doc COPYING
-%doc owncloud-migrate
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_nethserver_nextcloud
 

@@ -33,10 +33,13 @@ event_actions("nethserver-nextcloud-update", qw(
 event_templates("nethserver-nextcloud-update", qw(
   /etc/httpd/conf.d/nethserver.conf
   /etc/httpd/conf.d/default-virtualhost.inc
+  /etc/httpd/conf.d/nextcloud.conf
+  /etc/opt/rh/rh-php71/php.d/20-opcache.ini
 ));
 
 event_services("nethserver-nextcloud-update", qw(
   httpd restart
+  rh-php71-php-fpm restart
 ));
 
 event_actions("nethserver-nextcloud-save", qw(
