@@ -32,6 +32,15 @@
 
     if ($vhost ne '') {
         $OUT .= "<VirtualHost *:80>\n";
+        $OUT .= "    IncludeOptional conf.d/default-virtualhost.inc\n";
+        $OUT .= "</VirtualHost>\n\n";
+
+        $OUT .= "<VirtualHost *:80>\n";
+        $OUT .= "   ServerName $vhost\n";
+        $OUT .= "   RedirectMatch 301 ^(?!/.well-known/acme-challenge/).* https://$vhost\n";
+        $OUT .= "</VirtualHost>\n\n";
+
+        $OUT .= "<VirtualHost *:80>\n";
         $OUT .= "  ServerName $vhost\n";
         $OUT .= "  Redirect / https://$vhost/\n";
         $OUT .= "</VirtualHost>\n\n";
