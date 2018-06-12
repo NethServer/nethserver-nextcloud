@@ -48,16 +48,6 @@
         $OUT .= "<VirtualHost *:443>\n";
         $OUT .= "  ServerName $vhost\n";
         $OUT .= "  SSLEngine on\n";
-        $OUT .= "  SSLCertificateFile /etc/pki/tls/certs/localhost.crt\n";
-        $OUT .= "  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key\n";
-        if ($pki{ChainFile} && -e $pki{ChainFile}) {
-            $OUT .= "  SSLCertificateChainFile ".$pki{ChainFile}."\n";
-        }
-        if ($httpd{SSLCipherSuite}) {
-            $OUT .= "  SSLCipherSuite ".$httpd{SSLCipherSuite}."\n\n";
-        } else {
-            $OUT .= "  SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!SEED:!IDEA\n\n";
-        }
         $OUT .= "  RewriteCond %\{HTTPS\} !=on\n";
         $OUT .= "  RewriteRule (.*) https://%\{SERVER_NAME\}%\{REQUEST_URI\} [END,QSA,R=permanent]\n\n";
         $OUT .= "  Alias / \"/usr/share/nextcloud/\"";
