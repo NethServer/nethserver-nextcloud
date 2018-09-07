@@ -46,4 +46,5 @@ else
     if [ $? -eq 3 ]; then
         exit 0
     fi
+    OCC "db:add-missing-indices"
 fi
