@@ -20,6 +20,13 @@ my $fqdn = join('.', $cdb->get_value('SystemName'), $cdb->get_value('DomainName'
 OCC "config:system:set trusted_domains 0 --value=localhost";
 OCC "config:system:set trusted_domains 1 --value=$fqdn";
 OCC "config:system:set memcache.local --value='\\OC\\Memcache\\APCu'";
+OCC "config:system:set mail_smtpmode --value=smtp";
+OCC "config:system:set mail_smtpsecure --value=tls";
+OCC "config:system:set mail_smtpauthtype --value=LOGIN";
+OCC "config:system:set mail_from_address --value=no-reply";
+OCC "config:system:set mail_domain --value=".$cdb->get_value('DomainName');
+OCC "config:system:set mail_smtphost --value=localhost";
+OCC "config:system:set mail_smtpport --value=587";
 
 my $i = 2;
 foreach ($ndb->green(), $ndb->red(), $ndb->orange(), $ndb->blue()) {
