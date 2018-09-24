@@ -4,17 +4,11 @@ use strict;
 use NethServer::SSSD;
 use esmith::NetworksDB;
 use esmith::ConfigDB;
-use JSON;
-
-sub OCC_CMD
-{
-    my $params = join(" ", @_);
-    return "TERM=dumb su - apache -s /bin/bash -c \"source /opt/rh/rh-php71/enable; cd /usr/share/nextcloud/; php -dmemory_limit=512M occ $params\"";
-}
 
 sub OCC
 {
-    system(OCC_CMD @_);
+    my $params = join(" ", @_);
+    system("TERM=dumb su - apache -s /bin/bash -c \"source /opt/rh/rh-php71/enable; cd /usr/share/nextcloud/; php -dmemory_limit=512M occ $params\"");
 }
 
 # Update trusted domains
@@ -26,22 +20,13 @@ my $fqdn = join('.', $cdb->get_value('SystemName'), $cdb->get_value('DomainName'
 OCC "config:system:set trusted_domains 0 --value=localhost";
 OCC "config:system:set trusted_domains 1 --value=$fqdn";
 OCC "config:system:set memcache.local --value='\\OC\\Memcache\\APCu'";
-OCC "config:system:set logfile --value=/var/lib/nethserver/nextcloud/nextcloud.log";
 OCC "config:system:set mail_smtpmode --value=smtp";
-OCC "config:system:set mail_smtpsecure --value=none";
+OCC "config:system:set mail_smtpsecure --value=tls";
 OCC "config:system:set mail_smtpauthtype --value=LOGIN";
 OCC "config:system:set mail_from_address --value=no-reply";
 OCC "config:system:set mail_domain --value=".$cdb->get_value('DomainName');
 OCC "config:system:set mail_smtphost --value=localhost";
-OCC "config:system:set mail_smtpport --value=25";
-
-# set admin email address if it is empty
-my $admin_info_cmd = OCC_CMD "user:info --output json -- admin";
-my $admin_info = decode_json(`$admin_info_cmd`);
-my $admin_email = $admin_info->{'email'};
-if ($admin_email eq "") {
-  OCC "user:setting admin settings email \"no-reply@".$cdb->get_value('DomainName')."\"";
-}
+OCC "config:system:set mail_smtpport --value=587";
 
 my $i = 2;
 foreach ($ndb->green(), $ndb->red(), $ndb->orange(), $ndb->blue()) {
