@@ -1,7 +1,7 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
 Version: 1.2.6
-Release: 2%{?dist}
+Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
 BuildArch: noarch
@@ -44,9 +44,6 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 
 %changelog
-* Wed Oct 10 2018 Dan Brown <dan@familybrown.org> - 1.2.6-2
-- Run background tasks via cron job rather than AJAX
-
 * Wed Sep 26 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.6-1
 - Nextcloud: upgrade to 14.0.1 - nethserver/dev#5588
 
