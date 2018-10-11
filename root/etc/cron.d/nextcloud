@@ -1,0 +1,1 @@
+*/15 * * * *   apache /usr/bin/scl enable rh-php71 -- php -f /usr/share/nextcloud/cron.php
