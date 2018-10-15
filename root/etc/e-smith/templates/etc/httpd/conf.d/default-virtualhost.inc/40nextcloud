@@ -4,3 +4,5 @@
 RewriteEngine On
 RewriteCond %\{HTTPS\} !=on
 RewriteRule ^/nextcloud(/.*)?$  https://%\{HTTP_HOST\}/nextcloud$1  [L,R=301]
+Redirect 301 /.well-known/carddav /nextcloud/remote.php/dav
+Redirect 301 /.well-known/caldav /nextcloud/remote.php/dav
