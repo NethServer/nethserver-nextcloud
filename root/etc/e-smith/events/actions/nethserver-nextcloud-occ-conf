@@ -29,6 +29,7 @@ OCC "config:system:set mail_domain --value=".$cdb->get_value('DomainName');
 OCC "config:system:set mail_smtphost --value=localhost";
 OCC "config:system:set mail_smtpport --value=25";
 OCC "background:cron";
+OCC "db:convert-filecache-bigint -n";
 
 my $i = 2;
 foreach ($ndb->green(), $ndb->red(), $ndb->orange(), $ndb->blue()) {
