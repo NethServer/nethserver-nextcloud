@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.3.0
+Version: 1.4.0
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -44,6 +44,9 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 
 %changelog
+* Thu Dec 20 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.0-1
+- Nextcloud: upgrade to 15.0.0 - NethServer/dev#5674
+
 * Mon Dec 03 2018 Davide Principi <davide.principi@nethesis.it> - 1.3.0-1
 - Nextcloud: upgrade to 14.0.4 - NethServer/dev#5658
 
