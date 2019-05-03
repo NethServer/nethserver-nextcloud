@@ -1,5 +1,6 @@
 {
   my $vhost = $nextcloud{'VirtualHost'} || '';
+  my $wellknown = $nextcloud{'Wellknown'} || 'disabled';
   my $php_port = ${'rh-php72-php-fpm'}{'TCPPorts'} || '9002';
 
   my $config = '
@@ -57,4 +58,13 @@
         $OUT .= "  Alias /nextcloud \"/usr/share/nextcloud/\"";
         $OUT .= $config;
     }
+
+    if ($wellknown eq 'enabled' && $vhost eq '') {
+        $OUT .= "  \n\n# Enable webdav redirect\n";
+        $OUT .= "  Redirect 301 /.well-known/host-meta /nextcloud/public.php?service=host-meta\n";
+        $OUT .= "  Redirect 301 /.well-known/host-meta.json /nextcloud/public.php?service=host-meta-json\n";
+        $OUT .= "  Redirect 301 /.well-known/webfinger /nextcloud/public.php?service=webfinger\n";
+        $OUT .= "  Redirect 301 /.well-known/carddav /nextcloud/remote.php/dav/\n";
+        $OUT .= "  Redirect 301 /.well-known/caldav /nextcloud/remote.php/dav/\n";
+   }
 }
