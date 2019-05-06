@@ -9,14 +9,14 @@ URL: %{url_prefix}/%{name}
 
 BuildRequires: nethserver-devtools
 
-Requires: nextcloud >= 15.0.7
+Requires: nextcloud >= 16.0.0
 Requires: nethserver-httpd
 Requires: nethserver-mysql
-Requires: nethserver-rh-php71-php-fpm
+Requires: nethserver-rh-php72-php-fpm
 Requires: samba-client
-Requires: sclo-php71-php-smbclient
-Requires: rh-php71-php-opcache
-Requires: rh-php71-php-pecl-apcu
+Requires: sclo-php72-php-smbclient
+Requires: rh-php72-php-opcache
+Requires: rh-php72-php-pecl-apcu
 
 %description
 NethServer Nextcloud files and configuration.
