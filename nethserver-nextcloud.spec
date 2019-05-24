@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.5.0
+Version: 1.5.1
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -44,6 +44,9 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 
 %changelog
+* Fri May 24 2019 Davide Principi <davide.principi@nethesis.it> - 1.5.1-1
+- Nextcloud: upgrade to v16.0.1 - NethServer/dev#5762
+
 * Wed May 08 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.5.0-1
 - Nextcloud 16 - NethServer/dev#5753
 - Switch from PHP 7.1 to PHP 7.2
