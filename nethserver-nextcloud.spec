@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.2.6
+Version: 1.5.1
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -9,14 +9,14 @@ URL: %{url_prefix}/%{name}
 
 BuildRequires: nethserver-devtools
 
-Requires: nextcloud >= 14.0.1
+Requires: nextcloud >= 16.0.1
 Requires: nethserver-httpd
 Requires: nethserver-mysql
-Requires: nethserver-rh-php71-php-fpm
+Requires: nethserver-rh-php72-php-fpm
 Requires: samba-client
-Requires: sclo-php71-php-smbclient
-Requires: rh-php71-php-opcache
-Requires: rh-php71-php-pecl-apcu
+Requires: sclo-php72-php-smbclient
+Requires: rh-php72-php-opcache
+Requires: rh-php72-php-pecl-apcu
 
 %description
 NethServer Nextcloud files and configuration.
@@ -44,6 +44,34 @@ mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 
 %changelog
+* Fri May 24 2019 Davide Principi <davide.principi@nethesis.it> - 1.5.1-1
+- Nextcloud: upgrade to v16.0.1 - NethServer/dev#5762
+
+* Wed May 08 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.5.0-1
+- Nextcloud 16 - NethServer/dev#5753
+- Switch from PHP 7.1 to PHP 7.2
+
+* Mon Apr 29 2019 Alessandro Polidori <alessandro.polidori@gmail.com> - 1.4.4-1
+- Nextcloud: upgrade to v15.0.7 - NethServer/dev#5742
+
+* Thu Mar 07 2019 Alessandro Polidori <alessandro.polidori@gmail.com> - 1.4.3-1
+- Nextcloud: upgrade to v15.0.5 - nethserver/dev#5726
+
+* Tue Feb 12 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.2-1
+- Nextcloud: upgrade to 15.0.4 - NethServer/dev#5708
+
+* Thu Jan 17 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.1-1
+- Nextcloud: upgrade to 15.0.2 - nethserver/dev#5692
+
+* Thu Dec 20 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.4.0-1
+- Nextcloud: upgrade to 15.0.0 - NethServer/dev#5674
+
+* Mon Dec 03 2018 Davide Principi <davide.principi@nethesis.it> - 1.3.0-1
+- Nextcloud: upgrade to 14.0.4 - NethServer/dev#5658
+
+* Wed Oct 17 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.7-1
+- Nextcloud: upgrade to 14.0.3 - NethServer/dev#5604
+
 * Wed Sep 26 2018 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.6-1
 - Nextcloud: upgrade to 14.0.1 - nethserver/dev#5588
 

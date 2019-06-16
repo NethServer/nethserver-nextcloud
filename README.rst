@@ -25,6 +25,8 @@ Properties:
 
 * ``TrustedDomains``: list of trusted domains added to Nextcloud config file
 * ``VirtualHost``: set custom virtual host, e.g. `mycloud.mydomain.it`
+* ``Wellknown``: can be ``enabled` or ``disabled``. If enabled, add redirects for calDAV and cardDAV.
+  This property doest have effect only if ``VirtualHost`` is empty.
 
 
 Admin user
@@ -60,8 +62,8 @@ The database is automatically saved by ``nethserver-mysql``.
 OCC
 ===
 
-When using ``occ`` command, PHP 7.1 should be enabled inside the environment.
+When using ``occ`` command, PHP 7.2 should be enabled inside the environment.
 
 Invocation example: ::
 
-  su - apache -s /bin/bash -c "source /opt/rh/rh-php71/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
+  su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
