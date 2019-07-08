@@ -1,0 +1,26 @@
+{
+  "id": "nethserver-nextcloud",
+  "name": "NextCloud",
+  "summary": "Provides NextCloud for NethServer",
+  "description": "Provides NextCloud for NethServer",
+  "url": "",
+  "homepage": "https://github.com/NethServer/nethserver-nextcloud",
+  "provides": ["nethserver-nextcloud"],
+  "release": {
+    "version": "1.0.0"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/NethServer/dev/issues"
+  },
+  "author": {
+    "name": "Edoardo Spadoni",
+    "url": "https://github.com/NethServer/nethserver-nextcloud",
+    "email": "edoardo.spadoni@nethesis.it"
+  },
+  "infoapi": {
+    "path": "nethserver-nextcloud/read"
+  },
+  "icon": "logo.png",
+  "external": true
+}
