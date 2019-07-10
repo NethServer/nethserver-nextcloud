@@ -1,0 +1,251 @@
+<h2 i18n="configuration">Configuration</h2>
+
+<div id="loader" class="spinner spinner-lg"></div>
+<div id="content">
+  <form id="config-form" class="form-horizontal">
+    <div class="form-group">
+      <label
+        class="col-sm-2 control-label"
+        for="textInput-modal-markup"
+        i18n="enable_nextcloud"
+      ></label>
+      <div class="col-sm-5">
+        <input
+          id="config-status"
+          class="form-control"
+          type="checkbox"
+          placeholder="nextcloud.mydomain.org"
+          value=""
+        />
+      </div>
+    </div>
+    <div id="config-warning" class="alert alert-warning alert-dismissable">
+      <span class="pficon pficon-warning-triangle-o"></span>
+      <strong i18n="warning"></strong>. <span i18n="warning_text"></span>.
+    </div>
+    <div id="group-VirtualHost" class="form-group">
+      <label
+        class="col-sm-2 control-label"
+        for="textInput-modal-markup"
+        i18n="virtual_host_name"
+      ></label>
+      <div class="col-sm-5">
+        <input
+          id="config-VirtualHost"
+          class="form-control"
+          type="text"
+          placeholder=""
+          value=""
+        />
+        <span
+          id="error-VirtualHost"
+          class="help-block"
+          i18n="valid_fqdn"
+        ></span>
+      </div>
+    </div>
+    <div id="group-TrustedDomains" class="form-group">
+      <label
+        class="col-sm-2 control-label"
+        for="textInput-modal-markup"
+        i18n="trusted_domains_name"
+      ></label>
+      <div class="col-sm-5">
+        <textarea
+          id="config-TrustedDomains"
+          class="form-control"
+          type="checkbox"
+          placeholder=""
+          value=""
+        ></textarea>
+        <span
+          id="error-TrustedDomains"
+          class="help-block"
+          i18n="valid_trusted_domains"
+        ></span>
+      </div>
+    </div>
+    <div id="group-Wellknown" class="form-group">
+      <label
+        class="col-sm-2 control-label"
+        for="textInput-modal-markup"
+        i18n="well_know_name"
+      ></label>
+      <div class="col-sm-5">
+        <input
+          id="config-Wellknown"
+          class="form-control"
+          type="checkbox"
+          placeholder=""
+          value=""
+        />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label" for="textInput-modal-markup">
+        <div id="config-loader" class="spinner spinner-sm"></div>
+      </label>
+      <div class="col-sm-5">
+        <button class="btn btn-primary" type="submit" i18n="save"></button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  $("[i18n]").each(function() {
+    $(this).text(_($(this).attr("i18n")));
+  });
+
+  $("#loader").show();
+  $("#content").hide();
+  $("#config-warning").hide();
+  $("#config-loader").hide();
+  $("#group-VirtualHost").hide();
+  $("#group-Wellknown").hide();
+  $("#group-TrustedDomains").hide();
+  $("#error-VirtualHost").hide();
+  $("#error-TrustedDomains").hide();
+
+  $("#config-status").change(function() {
+    console.log("change");
+    if (this.checked) {
+      $("#config-warning").show();
+      $("#group-VirtualHost").show();
+      $("#group-TrustedDomains").show();
+      $("#group-Wellknown").show();
+    } else {
+      $("#config-warning").hide();
+      $("#group-VirtualHost").hide();
+      $("#group-TrustedDomains").hide();
+      $("#group-Wellknown").hide();
+      $("#error-VirtualHost").hide();
+      $("#error-TrustedDomains").hide();
+    }
+  });
+
+  function getConfig() {
+    nethserver.exec(
+      ["nethserver-nextcloud/read"],
+      {},
+      null,
+      function(success) {
+        try {
+          success = JSON.parse(success);
+
+          var override = success.props.VirtualHost != "";
+          if (override) {
+            $("#config-warning").show();
+            $("#group-VirtualHost").show();
+            $("#group-TrustedDomains").show();
+            $("#group-Wellknown").show();
+          }
+
+          $("#config-status").attr("checked", override);
+          $("#config-VirtualHost").val(success.props.VirtualHost);
+          $("#config-TrustedDomains").val(
+            success.props.TrustedDomains.length > 0
+              ? success.props.TrustedDomains.split(",").join("\n")
+              : ""
+          );
+          $("#config-Wellknown").attr(
+            "checked",
+            success.props.Wellknown == "enabled"
+          );
+
+          $("#loader").hide();
+          $("#content").show();
+        } catch (e) {
+          console.error(e);
+          $("#loader").hide();
+          $("#content").show();
+        }
+      },
+      function(error) {
+        console.error(error);
+      }
+    );
+  }
+
+  $("#config-form").submit(function(event) {
+    event.preventDefault();
+
+    $("#config-loader").show();
+
+    // reset errors
+    $("#group-VirtualHost").removeClass("has-error");
+    $("#error-VirtualHost").hide();
+    $("#group-TrustedDomains").removeClass("has-error");
+    $("#error-TrustedDomains").hide();
+
+    // get values
+    var status = $("#config-status").val();
+    var VirtualHost = $("#config-status").prop("checked")
+      ? $("#config-VirtualHost").val()
+      : "";
+    var TrustedDomains =
+      $("#config-TrustedDomains").val() == ""
+        ? ""
+        : $("#config-TrustedDomains")
+            .val()
+            .split("\n");
+    var Wellknown =
+      $("#config-Wellknown").prop("checked") == true ? "enabled" : "disabled";
+
+    // create obj
+    var configObj = {
+      props: {
+        VirtualHost: VirtualHost,
+        TrustedDomains: TrustedDomains,
+        Wellknown: Wellknown
+      },
+      name: "nextcloud"
+    };
+
+    // validate obj
+    nethserver.exec(
+      ["nethserver-nextcloud/validate"],
+      configObj,
+      null,
+      function(success) {
+        // define notifications
+        nethserver.notifications.success = _("configuration_ok");
+        nethserver.notifications.error = _("configuration_error");
+
+        // update values
+        nethserver.exec(
+          ["nethserver-nextcloud/update"],
+          configObj,
+          function(stream) {
+            console.info("nethserver-nextcloud", stream);
+          },
+          function(success) {
+            $("#config-loader").hide();
+            getConfig();
+          },
+          function(error) {
+            $("#config-loader").hide();
+            console.error(error);
+          }
+        );
+      },
+      function(error, data) {
+        $("#config-loader").hide();
+        var errorData = {};
+        try {
+          errorData = JSON.parse(data);
+          for (var e in errorData.attributes) {
+            var attr = errorData.attributes[e];
+            $("#group-" + attr.parameter).addClass("has-error");
+            $("#error-" + attr.parameter).show();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    );
+  });
+
+  // get initial values
+  getConfig();
+</script>

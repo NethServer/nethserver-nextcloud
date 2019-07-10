@@ -1,0 +1,56 @@
+textarea {
+    min-height: 150px;
+}
+
+.monospace {
+    display: inline;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.logs {
+    max-height: 500px;
+}
+
+.hidden {
+    display: none;
+}
+
+.m-right-sm {
+    margin-right: 5px;
+}
+
+.info-item {
+    font-size: 14px;
+}
+
+.logo {
+    float: right;
+    width: 65px;
+    height: 65px;
+}
+
+.form-control {
+    box-shadow: none !important;
+}
+
+.stats-container {
+    display: table-cell !important;
+    width: auto !important;
+    padding: 20px !important;
+    border-width: initial !important;
+    border-style: none !important;
+    border-color: initial !important;
+    border-image: initial !important;
+}
+
+.stats-text {
+    margin-top: 10px !important;
+}
+
+.open-app {
+    float: right;
+    position: absolute;
+    top: 16px;
+    right: 20px;
+}

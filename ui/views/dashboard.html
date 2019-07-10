@@ -1,0 +1,56 @@
+<h2 i18n="dashboard">Dashboard</h2>
+
+<div id="loader" class="spinner spinner-lg"></div>
+<div id="content">
+  <a
+    id="link"
+    target="_blank"
+    href=""
+    class="btn btn-primary btn-lg open-app"
+    i18n="open_app"
+  ></a>
+</div>
+
+<script>
+  $("[i18n]").each(function() {
+    $(this).text(_($(this).attr("i18n")));
+  });
+
+  $("#loader").show();
+  $("#content").hide();
+
+  // get stats
+  nethserver.exec(
+    ["nethserver-nextcloud/read"],
+    {},
+    null,
+    function(success) {
+      try {
+        success = JSON.parse(success);
+
+        var status = success.status;
+        for (var s in status) {
+          $("#stats-" + s).text(status[s] || 0);
+        }
+
+        if (success.props.VirtualHost.length > 0) {
+          $("#link").attr("href", "https://" + success.props.VirtualHost);
+          $("#link").attr("disabled", false);
+        } else {
+          $("#link").removeAttr("href");
+          $("#link").attr("disabled", true);
+        }
+
+        $("#loader").hide();
+        $("#content").show();
+      } catch (e) {
+        console.error(e);
+        $("#loader").hide();
+        $("#content").show();
+      }
+    },
+    function(error) {
+      console.error(error);
+    }
+  );
+</script>
