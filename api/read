@@ -35,6 +35,17 @@ if ($action eq 'app-info') {
     $output = {
         'url' => "$protocol//$host/nextcloud",
     };
+} else {
+    my $db = esmith::ConfigDB->open_ro();
+    my $nextcloud = $db->get('nextcloud');
+    if ($nextcloud) {
+        $output->{'name'} = 'nextcloud';
+        my %props = $nextcloud->props;
+        $output->{'type'} = $props{'type'};
+        foreach (qw(TrustedDomains VirtualHost Wellknown)) {
+            $output->{'props'}{$_} = $props{$_};
+        }
+    }
 }
 
 print encode_json($output);
