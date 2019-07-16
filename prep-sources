@@ -1,0 +1,9 @@
+#!/bin/bash
+
+tarball=nethserver-nextcloud.tar.gz
+bdir=$(mktemp -d -p .)
+trap "rm -rf ${bdir}" EXIT
+
+cp -a ui/* ${bdir}
+gzip ${bdir}/i18n/language.json
+tar -C ${bdir} -c -z -f ${tarball} . && echo "[INFO] created ${tarball}"
