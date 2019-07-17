@@ -1,0 +1,80 @@
+<h2 i18n="about">About</h2>
+
+<div id="loader" class="spinner"></div>
+<div id="content">
+  <img class="logo" src="logo.png" />
+  <h2 id="app-name"></h2>
+  <h3 id="app-summary"></h3>
+
+  <div class="list-group-item info-item">
+    <span class="fa fa-code m-right-sm"></span>
+    <strong id="app-version"></strong>
+  </div>
+
+  <div class="list-group-item info-item">
+    <span class="fa fa-globe m-right-sm"></span>
+    <a
+      id="app-web"
+      target="_blank"
+      href="https://github.com/NethServer/nethserver-nextcloud"
+      i18n="website"
+    ></a>
+  </div>
+  <div class="list-group-item info-item">
+    <span class="fa fa-bug m-right-sm"></span>
+    <a
+      id="app-bug"
+      target="_blank"
+      href="https://github.com/NethServer/dev/issues"
+      i18n="bug_tracker"
+    ></a>
+  </div>
+
+  <div class="list-group-item info-item">
+    <span class="fa fa-user m-right-sm"></span>
+    <span id="app-author"></span>
+  </div>
+</div>
+
+<script>
+  $("[i18n]").each(function() {
+    $(this).text(_($(this).attr("i18n")));
+  });
+
+  $("#loader").show();
+  $("#content").hide();
+
+  // get app info
+  nethserver.exec(
+    ["system-apps/read"],
+    {
+      action: "info",
+      name: "nethserver-nextcloud"
+    },
+    null,
+    function(success) {
+      try {
+        success = JSON.parse(success);
+
+        $("#app-name").text(success.name);
+        $("#app-summary").text(success.description);
+        $("#app-version").text(success.release.version);
+        $("#app-web").attr("href", success.homepage);
+        $("#app-bug").attr("href", success.bugs.url);
+        $("#app-author").text(
+          success.author.name + " | " + success.author.email
+        );
+
+        $("#loader").hide();
+        $("#content").show();
+      } catch (e) {
+        console.error(e);
+        $("#loader").hide();
+        $("#content").show();
+      }
+    },
+    function(error) {
+      console.error(error);
+    }
+  );
+</script>

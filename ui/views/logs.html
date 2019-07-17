@@ -1,0 +1,93 @@
+<h2 i18n="logs">Logs</h2>
+<h3>
+  <pre id="log-file" class="monospace">
+tail -50 /var/lib/nethserver/nextcloud/nextcloud.log</pre
+  >
+  <button id="follow-btn" i18n="follow" class="btn btn-primary"></button>
+</h3>
+<div id="loader" class="spinner"></div>
+<pre id="logs-output" class="logs"></pre>
+
+<script>
+  var logsAction = "dump";
+  var process = null;
+
+  // translate all texts
+  $("[i18n]").each(function() {
+    $(this).text(_($(this).attr("i18n")));
+  });
+
+  // function to handle logs
+  function handleLogs(action) {
+    $("#loader").show();
+    $("#logs-output").hide();
+
+    process = nethserver.readLogs(
+      {
+        action: action,
+        lines: action == "dump" ? 50 : null,
+        mode: "file",
+        paths: ["/var/lib/nethserver/nextcloud/nextcloud.log"]
+      },
+      action == "follow"
+        ? function(stream) {
+            $("#loader").hide();
+            $("#logs-output").show();
+
+            $("#logs-output").append(stream);
+
+            document.getElementById(
+              "logs-output"
+            ).scrollTop = document.getElementById("logs-output").scrollHeight;
+          }
+        : null,
+      function(success) {
+        $("#loader").hide();
+        $("#logs-output").show();
+
+        if (success.length == 0) {
+          $("#logs-output").text(_("process_terminated"));
+        } else {
+          $("#logs-output").text(success);
+        }
+
+        document.getElementById(
+          "logs-output"
+        ).scrollTop = document.getElementById("logs-output").scrollHeight;
+      },
+      function(error) {
+        $("#loader").hide();
+        $("#logs-output").show();
+        $("#logs-output").text(error);
+      },
+      false
+    );
+  }
+
+  // handle click on button
+  $("#follow-btn").click(function() {
+    if (logsAction == "dump") {
+      // follow mode
+      logsAction = "follow";
+
+      $("#follow-btn").text(_("stop_follow"));
+      $("#logs-output").text("");
+      $("#log-file").text(
+        "tail -f /var/lib/nethserver/nextcloud/nextcloud.log"
+      );
+    } else if (logsAction == "follow") {
+      // dump mode
+      logsAction = "dump";
+
+      $("#follow-btn").text(_("follow"));
+      $("#logs-output").text("");
+      $("#log-file").text(
+        "tail -50 /var/lib/nethserver/nextcloud/nextcloud.log"
+      );
+    }
+    handleLogs(logsAction);
+  });
+
+  // call method first time
+  handleLogs(logsAction);
+</script>

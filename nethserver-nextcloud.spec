@@ -4,6 +4,7 @@ Version: 1.5.2
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
+Source1: %{name}.tar.gz
 BuildArch: noarch
 URL: %{url_prefix}/%{name}
 
@@ -33,10 +34,14 @@ perl createlinks
 rm -rf %{buildroot}
 (cd root; find . -depth -print | cpio -dump %{buildroot})
 mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
-install -v -m 644 -D %{name}.json %{buildroot}/usr/share/cockpit/nethserver/applications/%{name}.json
-install -v -m 644 -D ui/public/logo.png %{buildroot}/usr/share/cockpit/%{name}/logo.png
-install -v -m 644 -D ui/public/manifest.json %{buildroot}/usr/share/cockpit/%{name}/manifest.json
-install -v -m 755 -D api/read %{buildroot}/usr/libexec/nethserver/api/%{name}/read
+
+mkdir -p %{buildroot}/usr/share/cockpit/%{name}/
+mkdir -p %{buildroot}/usr/share/cockpit/nethserver/applications/
+mkdir -p %{buildroot}/usr/libexec/nethserver/api/%{name}/
+tar xvf %{SOURCE1} -C %{buildroot}/usr/share/cockpit/%{name}/
+cp -a %{name}.json %{buildroot}/usr/share/cockpit/nethserver/applications/
+cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
+
 %{genfilelist} %{buildroot} --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' > %{name}-%{version}-filelist
 
 
@@ -110,7 +115,7 @@ install -v -m 755 -D api/read %{buildroot}/usr/libexec/nethserver/api/%{name}/re
 - Nextcloud: integrity check after upgrade - Bug NethServer/dev#5409
 
 * Tue Dec 19 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.9-1
-- Nextcloud: upgrade to 12.0.4 - NethServer/#5398 
+- Nextcloud: upgrade to 12.0.4 - NethServer/#5398
 
 * Fri Oct 06 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.8-1
 - Nextcloud 12.0.3 - NS 7.4
@@ -140,7 +145,7 @@ install -v -m 755 -D api/read %{buildroot}/usr/libexec/nethserver/api/%{name}/re
 
 * Tue Apr 04 2017 Davide Principi <davide.principi@nethesis.it> - 1.1.0-1
 - Nextcloud 11 - NethServer/dev#5242
-- Upgrade from NS 6 via backup and restore - NethServer/dev#5234 
+- Upgrade from NS 6 via backup and restore - NethServer/dev#5234
 
 * Thu Dec 15 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.4-1
 - Enable LDAPs protocol on Active Directory clients - NethServer/dev#5161

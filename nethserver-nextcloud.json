@@ -21,6 +21,5 @@
   "infoapi": {
     "path": "nethserver-nextcloud/read"
   },
-  "icon": "logo.png",
-  "external": true
+  "icon": "logo.png"
 }

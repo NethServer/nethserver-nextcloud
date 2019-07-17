@@ -29,12 +29,44 @@ my $input = NethServer::ApiTools::readInput();
 
 my $action = $input->{'action'};
 
+# get nextcloud props
+my $db = esmith::ConfigDB->open_ro();
+my $nextcloud = $db->get('nextcloud');
+my %props;
+if ($nextcloud) {
+    %props = $nextcloud->props;
+    foreach (qw(TrustedDomains VirtualHost Wellknown)) {
+        $output->{'props'}{$_} = $props{$_};
+    }
+}
+
 if ($action eq 'app-info') {
     my $protocol = $input->{'location'}->{'protocol'};
     my $host = $input->{'location'}->{'hostname'};
     $output = {
-        'url' => "$protocol//$host/nextcloud",
+        'url' => $props{"VirtualHost"} eq "" ? "$protocol//$host/nextcloud" : "$protocol//".$props{"VirtualHost"},
     };
+} elsif ($action eq 'configuration') {
+
+    # get stats
+    my $version = `su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ status" 2>/dev/null | grep version: | awk '{print \$3}'`;
+    chomp($version);
+    my $users = `su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ user:list" 2>/dev/null | wc -l`;
+    chomp($users);
+
+    # read pass and check if is changed
+    my $hashPass = `mysql nextcloud -B -N -e "select password from oc_users where uid='admin'" | cut -d'|' -f 2`;
+    chomp($hashPass);
+    my $adminPassWarn = `source /opt/rh/rh-php72/enable; php /usr/libexec/nethserver/api/nethserver-nextcloud/admin-password-helper '$hashPass'`;
+
+    # build the output
+    $output->{'stats'} = {
+        "version" => $version,
+        "users" => $users,
+        "admin_pass_warn" => ($? > 0) ? JSON::true : JSON::false,
+    }
+} else {
+    NethServer::ApiTools::error();
 }
 
 print encode_json($output);
