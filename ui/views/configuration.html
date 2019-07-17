@@ -102,7 +102,7 @@
   $("#config-warning").hide();
   $("#config-loader").hide();
   $("#group-VirtualHost").hide();
-  $("#group-Wellknown").hide();
+  $("#group-Wellknown").show();
   $("#group-TrustedDomains").hide();
   $("#error-VirtualHost").hide();
   $("#error-TrustedDomains").hide();
@@ -113,12 +113,12 @@
       $("#config-warning").show();
       $("#group-VirtualHost").show();
       $("#group-TrustedDomains").show();
-      $("#group-Wellknown").show();
+      $("#group-Wellknown").hide();
     } else {
       $("#config-warning").hide();
       $("#group-VirtualHost").hide();
       $("#group-TrustedDomains").hide();
-      $("#group-Wellknown").hide();
+      $("#group-Wellknown").show();
       $("#error-VirtualHost").hide();
       $("#error-TrustedDomains").hide();
     }
@@ -127,7 +127,7 @@
   function getConfig() {
     nethserver.exec(
       ["nethserver-nextcloud/read"],
-      {},
+      { action: "configuration" },
       null,
       function(success) {
         try {
@@ -138,7 +138,7 @@
             $("#config-warning").show();
             $("#group-VirtualHost").show();
             $("#group-TrustedDomains").show();
-            $("#group-Wellknown").show();
+            $("#group-Wellknown").hide();
           }
 
           $("#config-status").attr("checked", override);

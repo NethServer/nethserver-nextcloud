@@ -1,7 +1,18 @@
 <h2 i18n="dashboard">Dashboard</h2>
 
 <div id="loader" class="spinner spinner-lg"></div>
-<div id="content">
+<div class="content">
+  <div class="stats-container card-pf-utilization-details">
+    <span class="card-pf-utilization-card-details-count" id="stats-version"
+      >0</span
+    >
+    <span class="card-pf-utilization-card-details-description">
+      <span
+        class="card-pf-utilization-card-details-line-2 stats-text"
+        i18n="version"
+      ></span>
+    </span>
+  </div>
   <a
     id="link"
     target="_blank"
@@ -11,18 +22,41 @@
   ></a>
 </div>
 
+<div class="content">
+  <div class="stats-container card-pf-utilization-details">
+    <span class="card-pf-utilization-card-details-count" id="stats-users"
+      >0</span
+    >
+    <span class="card-pf-utilization-card-details-description">
+      <span
+        class="card-pf-utilization-card-details-line-2 stats-text"
+        i18n="users"
+      ></span>
+    </span>
+  </div>
+</div>
+
+<div id="password-warn">
+  <h3 i18n="admin-password"></h3>
+  <div class="alert alert-warning">
+    <span class="pficon pficon-warning-triangle-o"></span>
+    <strong i18n="warning"></strong>. <span i18n="warning-password"></span>
+  </div>
+</div>
+
 <script>
   $("[i18n]").each(function() {
     $(this).text(_($(this).attr("i18n")));
   });
 
   $("#loader").show();
-  $("#content").hide();
+  $(".content").hide();
+  $("#password-warn").hide();
 
   // get stats
   nethserver.exec(
     ["nethserver-nextcloud/read"],
-    {},
+    { action: "configuration" },
     null,
     function(success) {
       try {
@@ -33,20 +67,25 @@
           $("#stats-" + s).text(status[s] || 0);
         }
 
-        if (success.props.VirtualHost.length > 0) {
-          $("#link").attr("href", "https://" + success.props.VirtualHost);
-          $("#link").attr("disabled", false);
-        } else {
-          $("#link").removeAttr("href");
-          $("#link").attr("disabled", true);
+        $("#link").attr(
+          "href",
+          success.props.VirtualHost == ""
+            ? "https://" + window.location.hostname + "/nextcloud"
+            : "https://" + success.props.VirtualHost
+        );
+
+        $("#stats-version").text(success.stats.version);
+        $("#stats-users").text(success.stats.users);
+        if (success.stats.admin_pass_warn) {
+          $("#password-warn").show();
         }
 
         $("#loader").hide();
-        $("#content").show();
+        $(".content").show();
       } catch (e) {
         console.error(e);
         $("#loader").hide();
-        $("#content").show();
+        $(".content").show();
       }
     },
     function(error) {

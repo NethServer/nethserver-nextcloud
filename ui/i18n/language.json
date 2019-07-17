@@ -23,5 +23,8 @@
   "teams": "Teams",
   "channels": "Channels",
   "posts": "Posts",
-  "open_app": "Open app"
+  "open_app": "Open app",
+  "version": "Version",
+  "admin-password": "Admin password",
+  "warning-password": "Change the default 'admin' password to avoid security issues!"
 }
