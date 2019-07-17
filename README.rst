@@ -25,8 +25,8 @@ Properties:
 
 * ``TrustedDomains``: list of trusted domains added to Nextcloud config file
 * ``VirtualHost``: set custom virtual host, e.g. `mycloud.mydomain.it`
-* ``Wellknown``: can be ``enabled` or ``disabled``. If enabled, add redirects for calDAV and cardDAV.
-  This property doest have effect only if ``VirtualHost`` is empty.
+* ``Wellknown``: can be ``enabled`` or ``disabled``. If enabled, add redirects for calDAV and cardDAV.
+  This property has effect only if ``VirtualHost`` is empty.
 
 
 Admin user
