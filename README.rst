@@ -67,3 +67,67 @@ When using ``occ`` command, PHP 7.2 should be enabled inside the environment.
 Invocation example: ::
 
   su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
+
+Cockpit API
+===========
+
+read
+----
+
+Return mattermost status and configuration.
+
+Input
+^^^^^
+- ``app-info`` or ``configuration``
+
+Output
+^^^^^^
+
+Example (``app-info``): ::
+
+ {
+  "url": "https://your.host.domain"
+ }
+
+Example (``configuration``): ::
+
+ {
+  "props": {
+    "Wellknown": "enabled",
+    "VirtualHost": "eccoci.rva.org",
+    "TrustedDomains": "a.b,b.c"
+  },
+  "stats": {
+    "version": "16.0.2.1",
+    "admin_pass_warn": true,
+    "users": "3"
+  }
+ }
+
+
+validate
+--------
+
+Constraints:
+
+- ``VirtualHost``: must be a valid FQDN or EMPTY
+- ``TrustedDomains``: must be an array of valid FQDN
+
+Input
+^^^^^
+
+Example: ::
+
+ {
+  "props": {
+    "Wellknown": "enabled",
+    "VirtualHost": "eccoci.rva.org",
+    "TrustedDomains": "a.b,b.c"
+  }
+ }
+
+
+update
+------
+
+Same input as validate.
