@@ -2,19 +2,19 @@
 #
 # Copyright (C) 2012 Nethesis S.r.l.
 # http://www.nethesis.it - support@nethesis.it
-# 
+#
 # This script is part of NethServer.
-# 
+#
 # NethServer is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License,
 # or any later version.
-# 
+#
 # NethServer is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with NethServer.  If not, see <http://www.gnu.org/licenses/>.
 #
@@ -22,7 +22,7 @@
 use esmith::Build::CreateLinks  qw(:all);
 
 #
-# Event nethserver-nextcloud-update 
+# Event nethserver-nextcloud-update
 #
 event_actions("nethserver-nextcloud-update", qw(
   initialize-default-databases 00
@@ -41,6 +41,17 @@ event_templates("nethserver-nextcloud-update", qw(
 event_services("nethserver-nextcloud-update", qw(
   httpd restart
   rh-php72-php-fpm restart
+));
+
+event_templates("nethserver-nextcloud-save", qw(
+  /etc/httpd/conf.d/nethserver.conf
+  /etc/httpd/conf.d/default-virtualhost.inc
+  /etc/httpd/conf.d/nextcloud.conf
+  /etc/httpd/conf.d/zz_nextcloud.conf
+));
+
+event_services("nethserver-nextcloud-save", qw(
+  httpd restart
 ));
 
 event_actions("nethserver-nextcloud-save", qw(
