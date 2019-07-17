@@ -63,6 +63,10 @@
           class="help-block"
           i18n="valid_trusted_domains"
         ></span>
+        <span
+          class="help-block"
+          i18n="default_trusted_domains"
+        ></span>
       </div>
     </div>
     <div id="group-Wellknown" class="form-group">
@@ -108,22 +112,19 @@
   $("#config-loader").hide();
   $("#group-VirtualHost").hide();
   $("#group-Wellknown").show();
-  $("#group-TrustedDomains").hide();
+  $("#group-TrustedDomains").show();
   $("#error-VirtualHost").hide();
   $("#error-TrustedDomains").hide();
 
   $("#config-status").change(function() {
-    console.log("change");
     if (this.checked) {
       $("#config-warning").show();
       $("#Wellknown-warning").hide();
       $("#group-VirtualHost").show();
-      $("#group-TrustedDomains").show();
       $("#group-Wellknown").hide();
     } else {
       $("#config-warning").hide();
       $("#group-VirtualHost").hide();
-      $("#group-TrustedDomains").hide();
       $("#group-Wellknown").show();
       $("#error-VirtualHost").hide();
       $("#error-TrustedDomains").hide();
@@ -157,7 +158,6 @@
           if (override) {
             $("#config-warning").show();
             $("#group-VirtualHost").show();
-            $("#group-TrustedDomains").show();
             $("#group-Wellknown").hide();
           }
 
