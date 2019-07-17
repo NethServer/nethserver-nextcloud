@@ -26,5 +26,6 @@
   "open_app": "Open app",
   "version": "Version",
   "admin-password": "Admin password",
-  "warning-password": "Change the default 'admin' password to avoid security issues!"
+  "warning-password": "Change the default 'admin' password to avoid security issues!",
+  "warning_wellknown": "This option will override discovery URL used by clients to configurare contacts and calendars synchronization. Leave this option unchecked if you already have installed a groupware such as WebTop or SOGo"
 }

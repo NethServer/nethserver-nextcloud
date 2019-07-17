@@ -21,7 +21,7 @@
     </div>
     <div id="config-warning" class="alert alert-warning alert-dismissable">
       <span class="pficon pficon-warning-triangle-o"></span>
-      <strong i18n="warning"></strong>. <span i18n="warning_text"></span>.
+      <strong i18n="warning"></strong>: <span i18n="warning_text"></span>.
     </div>
     <div id="group-VirtualHost" class="form-group">
       <label
@@ -81,6 +81,10 @@
         />
       </div>
     </div>
+    <div id="Wellknown-warning" class="alert alert-warning alert-dismissable">
+      <span class="pficon pficon-warning-triangle-o"></span>
+      <strong i18n="warning"></strong>: <span i18n="warning_wellknown"></span>.
+    </div>
     <div class="form-group">
       <label class="col-sm-2 control-label" for="textInput-modal-markup">
         <div id="config-loader" class="spinner spinner-sm"></div>
@@ -100,6 +104,7 @@
   $("#loader").show();
   $("#content").hide();
   $("#config-warning").hide();
+  $("#Wellknown-warning").hide();
   $("#config-loader").hide();
   $("#group-VirtualHost").hide();
   $("#group-Wellknown").show();
@@ -111,6 +116,7 @@
     console.log("change");
     if (this.checked) {
       $("#config-warning").show();
+      $("#Wellknown-warning").hide();
       $("#group-VirtualHost").show();
       $("#group-TrustedDomains").show();
       $("#group-Wellknown").hide();
@@ -121,6 +127,20 @@
       $("#group-Wellknown").show();
       $("#error-VirtualHost").hide();
       $("#error-TrustedDomains").hide();
+
+      if ($("#config-Wellknown").prop("checked")) {
+        $("#Wellknown-warning").show();
+      } else {
+        $("#Wellknown-warning").hide();
+      }
+    }
+  });
+
+  $("#config-Wellknown").change(function() {
+    if (this.checked) {
+      $("#Wellknown-warning").show();
+    } else {
+      $("#Wellknown-warning").hide();
     }
   });
 
@@ -152,6 +172,12 @@
             "checked",
             success.props.Wellknown == "enabled"
           );
+
+          if ($("#config-Wellknown").prop("checked")) {
+            $("#Wellknown-warning").show();
+          } else {
+            $("#Wellknown-warning").hide();
+          }
 
           $("#loader").hide();
           $("#content").show();
