@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.6.0
+Version: 1.6.1
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -53,6 +53,9 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 
 %changelog
+* Mon Aug 05 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.6.1-1
+- Nextcloud: upgrade to v16.0.3 - NethServer/dev#5798
+
 * Wed Jul 17 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.6.0-1
 - Nextcloud Cockpit UI - NethServer/dev#5789
 
