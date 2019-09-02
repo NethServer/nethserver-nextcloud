@@ -7,7 +7,7 @@
   "homepage": "https://github.com/NethServer/nethserver-nextcloud",
   "provides": ["nethserver-nextcloud"],
   "release": {
-    "version": "1.0.0"
+    "version": "_RELEASE_"
   },
   "license": "GPL-3.0",
   "bugs": {
