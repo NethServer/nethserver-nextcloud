@@ -1,0 +1,9 @@
+#
+# nsapi_nethserver_nextcloud
+#
+Cmnd_Alias NSAPI_NETHSERVER_NEXTCLOUD = \
+    /usr/libexec/nethserver/api/nethserver-nextcloud/read, \
+    /usr/libexec/nethserver/api/nethserver-nextcloud/update, \
+    /usr/libexec/nethserver/api/nethserver-nextcloud/validate
+
+Defaults!NSAPI_NETHSERVER_NEXTCLOUD !requiretty
