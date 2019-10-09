@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.7.0
+Version: 1.7.1
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -56,6 +56,10 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 
 %changelog
+* Wed Oct 09 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.7.1-1
+- Nextcloud: upgrade to v16.0.5 - NethServer/dev#5858
+- Cockpit: improve English labels - NethServer/dev#5856
+
 * Tue Oct 01 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.7.0-1
 - Sudoers based authorizations for Cockpit UI - NethServer/dev#5805
 
