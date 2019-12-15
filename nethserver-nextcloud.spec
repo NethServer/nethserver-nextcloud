@@ -16,7 +16,6 @@ Requires: nethserver-mysql
 Requires: nethserver-rh-php72-php-fpm
 Requires: samba-client
 Requires: sclo-php72-php-smbclient
-Requires: rh-php72-php-opcache
 Requires: rh-php72-php-pecl-apcu
 
 %description
