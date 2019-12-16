@@ -1,7 +1,6 @@
 {
   my $vhost = $nextcloud{'VirtualHost'} || '';
   my $wellknown = $nextcloud{'Wellknown'} || 'disabled';
-  my $php_port = ${'rh-php72-php-fpm'}{'TCPPorts'} || '9002';
 
   my $config = '
   <Directory "/usr/share/nextcloud">
@@ -18,7 +17,7 @@
     </IfModule>
 
     <FilesMatch \.php$>
-      SetHandler "proxy:fcgi://127.0.0.1:'.$php_port.'"
+      SetHandler "proxy:unix:/var/run/rh-php72-php-fpm/nethserver-nextcloud-php72.sock|fcgi://localhost/"
     </FilesMatch>
 
     SetEnv HOME /usr/share/nextcloud
