@@ -35,7 +35,6 @@ event_templates("nethserver-nextcloud-update", qw(
   /etc/httpd/conf.d/default-virtualhost.inc
   /etc/httpd/conf.d/nextcloud.conf
   /etc/httpd/conf.d/zz_nextcloud.conf
-  /etc/opt/rh/rh-php72/php.d/20-opcache.ini
 ));
 
 event_services("nethserver-nextcloud-update", qw(

@@ -13,11 +13,9 @@ BuildRequires: nethserver-devtools
 Requires: nextcloud >= 17.0.1
 Requires: nethserver-httpd
 Requires: nethserver-mysql
-Requires: nethserver-rh-php72-php-fpm
+Requires: nethserver-rh-php72-php-fpm >= 1.1.0
 Requires: samba-client
 Requires: sclo-php72-php-smbclient
-Requires: rh-php72-php-opcache
-Requires: rh-php72-php-pecl-apcu
 
 %description
 NethServer Nextcloud files and configuration.
@@ -53,6 +51,7 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %doc COPYING
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_nethserver_nextcloud
+%config(noreplace) %{_sysconfdir}/opt/rh/rh-php72/php-fpm.d/000-nextcloud.conf
 
 
 %changelog

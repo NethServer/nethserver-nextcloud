@@ -68,6 +68,11 @@ Invocation example: ::
 
   su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
 
+Log of rh-php72-fpm
+===================
+
+The log of rh-php72-fpm can be found at `/var/opt/rh/rh-php72/log/php-fpm/error-nextcloud.log`
+
 Cockpit API
 ===========
 
