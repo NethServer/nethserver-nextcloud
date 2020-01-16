@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.8.3
+Version: 1.8.4
 Release: 1%{?dist}
 License: GPL
 Source: %{name}-%{version}.tar.gz
@@ -55,6 +55,9 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 
 %changelog
+* Thu Jan 16 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.4-1
+- facter: improve user count - NethServer/nethserver-nextcloud/69
+
 * Wed Jan 15 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.3-1
 - Nextcloud: upgrade to v17.0.2 - NethServer/dev#6016
 - Cockpit: change package Dashboard page title - NethServer/dev#6004
