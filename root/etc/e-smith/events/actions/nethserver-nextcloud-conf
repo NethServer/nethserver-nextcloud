@@ -28,8 +28,6 @@ if [[ $res == '0' ]]; then
 
     OCC "app:enable user_ldap"
     OCC "ldap:create-empty-config" # create config with empty id
-    OCC "ldap:create-empty-config" # create config with id s01
-    OCC "ldap:delete-config ''" # delte config with empty id
 else
     # to satisfy code integrity check
     if [ -f /usr/share/nextcloud/.htaccess.rpmsave ]; then
