@@ -137,7 +137,7 @@ update
 
 Same input as validate.
 
-Full Re-Install
+Full reinstall
 ===============
 As with many other applications in NethServer, un-installing the Nextcloud application **does not** remove the settings, stored files, or the database. Here are the suggested steps to do a full un-install and re-install with a fresh configuration:
 
@@ -147,4 +147,4 @@ As with many other applications in NethServer, un-installing the Nextcloud appli
 4. Remove the whole Nextcloud directory: ``rm -rf /usr/share/nextcloud/``
 5. Remove the e-smith DB configuration: ``config delete nextcloud``
 6. Remove the NethServer config directory: ``rm -rf /var/lib/nethserver/nextcloud``
-7. Install NC through the admin page
+7. Install NextCloud from the Software Center
