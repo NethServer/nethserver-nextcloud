@@ -3,19 +3,41 @@ Name: nethserver-nextcloud
 Version: 1.8.5
 Release: 1%{?dist}
 License: GPL
-Source: %{name}-%{version}.tar.gz
+Source0: %{name}-%{version}.tar.gz
 Source1: %{name}.tar.gz
+
+%define nc_version 18.0.1
+Source2: https://download.nextcloud.com/server/releases/nextcloud-%{nc_version}.tar.bz2
+
 BuildArch: noarch
 URL: %{url_prefix}/%{name}
 
 BuildRequires: nethserver-devtools
 
-Requires: nextcloud >= 18.0.0
+Provides: nextcloud
+Obsoletes: nextcloud
 Requires: nethserver-httpd
 Requires: nethserver-mysql
 Requires: nethserver-rh-php72-php-fpm >= 1.1.0
 Requires: samba-client
+
+# Required php packages
+Requires: rh-php72
+Requires: rh-php72-php-fpm
+Requires: rh-php72-php-gd
+Requires: rh-php72-php-pdo
+Requires: rh-php72-php-mbstring
+Requires: rh-php72-php-imagick
+
+# Recommended php packages
+Requires: rh-php72-php-intl
+
+# Required php packages for specific apps
+Requires: rh-php72-php-ldap
 Requires: sclo-php72-php-smbclient
+
+# Required php packages for MariaDB
+Requires: rh-php72-php-pdo_mysql
 
 %description
 NethServer Nextcloud files and configuration.
@@ -32,6 +54,10 @@ sed -i 's/_RELEASE_/%{version}/' %{name}.json
 %install
 rm -rf %{buildroot}
 (cd root; find . -depth -print | cpio -dump %{buildroot})
+
+mkdir -p %{buildroot}/usr/share/nextcloud/{config,data,etc,assets,updater}
+tar xf %{SOURCE2} -C %{buildroot}/usr/share
+
 mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 mkdir -p %{buildroot}/usr/share/cockpit/%{name}/
@@ -43,7 +69,7 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 %{genfilelist} %{buildroot} \
     --file /etc/sudoers.d/50_nsapi_nethserver_nextcloud 'attr(0440,root,root)' \
-    --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' > %{name}-%{version}-filelist
+    --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' | grep -v '/usr/share/nextcloud' > %{name}-%{version}-filelist
 
 
 %files -f %{name}-%{version}-filelist
@@ -52,7 +78,11 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_nethserver_nextcloud
 %config(noreplace) %{_sysconfdir}/opt/rh/rh-php72/php-fpm.d/000-nextcloud.conf
-
+%config(noreplace) %attr(0644,apache,apache) /usr/share/nextcloud/.user.ini
+%dir %attr(0755,root,apache) /usr/share/nextcloud
+%attr(-,apache,apache) /usr/share/nextcloud
+%attr(0755,apache,apache) /usr/share/nextcloud/occ
+%attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
 * Mon Jan 27 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.5-1
