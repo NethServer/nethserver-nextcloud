@@ -6,7 +6,7 @@ License: GPL
 Source0: %{name}-%{version}.tar.gz
 Source1: %{name}.tar.gz
 
-%define nc_version 18.0.1
+%define nc_version 18.0.2
 Source2: https://download.nextcloud.com/server/releases/nextcloud-%{nc_version}.tar.bz2
 
 BuildArch: noarch
