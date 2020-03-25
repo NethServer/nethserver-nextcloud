@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.9.0
+Version: 1.9.1
 Release: 1%{?dist}
 License: GPL
 Source0: %{name}-%{version}.tar.gz
@@ -85,6 +85,9 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Wed Mar 25 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.9.1-1
+- Nextcloud 18.0.2 - NethServer/dev#6095
+
 * Wed Feb 26 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.9.0-1
 - Nextcloud trusted domains are not deleted - Bug NethServer/dev#6067
 - NextCloud 18.0.1  - NethServer/dev#6062
