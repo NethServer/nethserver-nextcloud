@@ -18,26 +18,26 @@ Provides: nextcloud
 Obsoletes: nextcloud
 Requires: nethserver-httpd
 Requires: nethserver-mysql
-Requires: nethserver-rh-php72-php-fpm >= 1.1.0
+Requires: nethserver-rh-php73-php-fpm >= 1.0.0
 Requires: samba-client
 
 # Required php packages
-Requires: rh-php72
-Requires: rh-php72-php-fpm
-Requires: rh-php72-php-gd
-Requires: rh-php72-php-pdo
-Requires: rh-php72-php-mbstring
-Requires: rh-php72-php-imagick
+Requires: rh-php73
+Requires: rh-php73-php-fpm
+Requires: rh-php73-php-gd
+Requires: rh-php73-php-pdo
+Requires: rh-php73-php-mbstring
+Requires: rh-php73-php-imagick
 
 # Recommended php packages
-Requires: rh-php72-php-intl
+Requires: rh-php73-php-intl
 
 # Required php packages for specific apps
-Requires: rh-php72-php-ldap
-Requires: sclo-php72-php-smbclient
+Requires: rh-php73-php-ldap
+Requires: sclo-php73-php-smbclient
 
 # Required php packages for MariaDB
-Requires: rh-php72-php-pdo_mysql
+Requires: rh-php73-php-pdo_mysql
 
 %description
 NethServer Nextcloud files and configuration.
@@ -77,7 +77,7 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %doc COPYING
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_nethserver_nextcloud
-%config(noreplace) %{_sysconfdir}/opt/rh/rh-php72/php-fpm.d/000-nextcloud.conf
+%config(noreplace) %{_sysconfdir}/opt/rh/rh-php73/php-fpm.d/000-nextcloud.conf
 %config(noreplace) %attr(0644,apache,apache) /usr/share/nextcloud/.user.ini
 %dir %attr(0755,root,apache) /usr/share/nextcloud
 %attr(-,apache,apache) /usr/share/nextcloud
@@ -242,4 +242,3 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 * Mon Aug 01 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.0-1
 - First Nextcloud release - NethServer/dev#5055
-

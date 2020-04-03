@@ -62,16 +62,16 @@ The database is automatically saved by ``nethserver-mysql``.
 OCC
 ===
 
-When using ``occ`` command, PHP 7.2 should be enabled inside the environment.
+When using ``occ`` command, PHP 7.3 should be enabled inside the environment.
 
 Invocation example: ::
 
-  su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
+  su - apache -s /bin/bash -c "source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
 
-Log of rh-php72-fpm
+Log of rh-php73-fpm
 ===================
 
-The log of rh-php72-fpm can be found at `/var/opt/rh/rh-php72/log/php-fpm/error-nextcloud.log`
+The log of rh-php73-fpm can be found at `/var/opt/rh/rh-php73/log/php-fpm/error-nextcloud.log`
 
 Cockpit API
 ===========
