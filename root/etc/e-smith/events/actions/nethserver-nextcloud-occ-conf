@@ -8,7 +8,7 @@ use esmith::ConfigDB;
 sub OCC
 {
     my $params = join(" ", @_);
-    system("TERM=dumb su - apache -s /bin/bash -c \"source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php -dmemory_limit=512M occ $params\"");
+    system("TERM=dumb su - apache -s /bin/bash -c \"source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php -dmemory_limit=512M occ $params\"");
 }
 
 # Update trusted domains

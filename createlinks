@@ -39,7 +39,7 @@ event_templates("nethserver-nextcloud-update", qw(
 
 event_services("nethserver-nextcloud-update", qw(
   httpd restart
-  rh-php72-php-fpm restart
+  rh-php73-php-fpm restart
 ));
 
 event_templates("nethserver-nextcloud-save", qw(

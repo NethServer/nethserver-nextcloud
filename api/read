@@ -49,15 +49,15 @@ if ($action eq 'app-info') {
 } elsif ($action eq 'configuration') {
 
     # get stats
-    my $version = `su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ status" 2>/dev/null | grep version: | awk '{print \$3}'`;
+    my $version = `su - apache -s /bin/bash -c "source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php occ status" 2>/dev/null | grep version: | awk '{print \$3}'`;
     chomp($version);
-    my $users = `su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ user:list" 2>/dev/null | wc -l`;
+    my $users = `su - apache -s /bin/bash -c "source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php occ user:list" 2>/dev/null | wc -l`;
     chomp($users);
 
     # read pass and check if is changed
     my $hashPass = `mysql nextcloud -B -N -e "select password from oc_users where uid='admin'" | cut -d'|' -f 2`;
     chomp($hashPass);
-    my $adminPassWarn = `source /opt/rh/rh-php72/enable; php /usr/libexec/nethserver/api/nethserver-nextcloud/admin-password-helper '$hashPass'`;
+    my $adminPassWarn = `source /opt/rh/rh-php73/enable; php /usr/libexec/nethserver/api/nethserver-nextcloud/admin-password-helper '$hashPass'`;
 
     # build the output
     $output->{'stats'} = {
