@@ -31,6 +31,7 @@ Requires: rh-php73-php-imagick
 
 # Recommended php packages
 Requires: rh-php73-php-intl
+Requires: rh-php73-php-gmp
 
 # Required php packages for specific apps
 Requires: rh-php73-php-ldap
