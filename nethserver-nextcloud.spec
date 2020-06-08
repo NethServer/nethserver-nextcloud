@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.10.1
+Version: 1.11.0
 Release: 1%{?dist}
 License: GPL
 Source0: %{name}-%{version}.tar.gz
@@ -86,6 +86,9 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Mon Jun 08 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.11.0-1
+- Nextcloud 19.0.0 - NethServer/dev#6178
+
 * Thu May 07 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.10.1-1
 - Nextcloud 18.0.4 - NethServer/dev#6155
 
