@@ -66,6 +66,10 @@ When using ``occ`` command, PHP 7.3 should be enabled inside the environment.
 
 Invocation example: ::
 
+  occ ldap:show-config"
+
+The ``occ`` command is just a wrapper around: ::
+
   su - apache -s /bin/bash -c "source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
 
 Log of rh-php73-fpm
