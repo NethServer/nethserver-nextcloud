@@ -22,4 +22,4 @@
 
 # OCC wrapper running PHP from SCL
 
-sudo -u apache scl enable rh-php73 -- php -d memory_limit=512M  /usr/share/nextcloud/occ "$@"
+runuser -u apache -- scl enable rh-php73 --  php -d memory_limit=512M  /usr/share/nextcloud/occ "$@"
