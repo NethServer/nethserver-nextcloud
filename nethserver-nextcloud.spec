@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.11.0
+Version: 1.12.0
 Release: 1%{?dist}
 License: GPL
 Source0: %{name}-%{version}.tar.gz
@@ -86,6 +86,9 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Mon Jun 15 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.12.0-1
+- Nextcloud: files shared with group are not listed in the UI - Bug NethServer/dev#6202
+
 * Mon Jun 08 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.11.0-1
 - Nextcloud 19.0.0 - NethServer/dev#6178
 
