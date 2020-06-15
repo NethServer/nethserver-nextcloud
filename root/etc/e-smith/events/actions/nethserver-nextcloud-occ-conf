@@ -4,11 +4,57 @@ use strict;
 use NethServer::SSSD;
 use esmith::NetworksDB;
 use esmith::ConfigDB;
+use NethServer::AccountsList;
+use NethServer::LdapClient;
+use Sys::Hostname;
+use Net::LDAP;
+
+# Global variables for list_system_groups function
+our $sssd;
+our %config;
+our $al;
+our @system_groups;
 
 sub OCC
 {
     my $params = join(" ", @_);
     system("TERM=dumb su - apache -s /bin/bash -c \"source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php -dmemory_limit=512M occ $params\"");
+}
+
+sub _cb_group_push
+{
+    my $message = shift;
+    my $entry = shift;
+
+    my $key = lc($entry->get_value($config{'keyattr'}));
+    if ( $sssd->isAD() && ($al->is_system_group($key) || $al->is_system_group($entry->get_value('objectSid'))) ) {
+        push(@system_groups, $key);
+    }
+}
+
+
+sub list_system_groups
+{
+    my ($systemName, $domainName) = split(/\./, Sys::Hostname::hostname(), 2);
+    my $timeout = 10;
+
+    my $ldap = NethServer::LdapClient::connect($sssd, 'timeout' => $timeout);
+
+    if( ! $ldap) {
+        return;
+    }
+
+    NethServer::LdapClient::paged_search($sssd, $ldap,
+        'base' => $sssd->groupDN(),
+        'scope' => 'subtree',
+        'deref' => 'never',
+        'timelimit' => $timeout,
+        'filter' => $config{'filter'},
+        'callback' => \&_cb_group_push
+    );
+
+    $ldap->unbind();
+    $ldap->disconnect();
 }
 
 # Update trusted domains
@@ -52,7 +98,37 @@ foreach (split(',', $trusted_domains)) {
 
 # Update user authentication
 
-my $sssd = new NethServer::SSSD();
+$sssd = new NethServer::SSSD();
+$al = NethServer::AccountsList->new();
+
+if($sssd->isLdap()) {
+    %config = ( %config,
+        'keyattr' => 'cn',
+        'filter' => '(objectClass=posixGroup)',
+        'default_filter' => '(&(|(objectclass=posixGroup)))'
+    );
+} elsif($sssd->isAD()) {
+    %config = ( %config,
+        'keyattr' => 'sAMAccountName',
+        'filter' => '(objectClass=group)',
+        'default_filter' => '(&(objectClass=group)(groupType:1.2.840.113556.1.4.803:=2))'
+    );
+}
+
+
+# set default group filter for backward compatibility
+my $group_filter = $config{'default_filter'};
+
+# if any system group has been found, refine the group filter by excluding them
+list_system_groups($sssd);
+if (scalar @system_groups > 0) {
+    $group_filter = "(&(objectClass=group)";
+    foreach (@system_groups) {
+        $group_filter .= "(!(cn=$_))";
+    }
+    $group_filter .= ")";
+}
+
 my $quotedBindPass = $sssd->bindPassword();
 $quotedBindPass =~ s/\'/\\'/g;
 $quotedBindPass =~ s/\$/\\\$/g;
@@ -66,7 +142,7 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapBaseUsers ".$sssd->userDN();
 
     OCC "ldap:set-config s01 ldapGroupDisplayName cn";
-    OCC "ldap:set-config s01 ldapGroupFilter '(&(|(objectclass=posixGroup)))'";
+    OCC "ldap:set-config s01 ldapGroupFilter '$group_filter'";
     OCC "ldap:set-config s01 ldapGroupFilterObjectclass posixGroup";
     OCC "ldap:set-config s01 ldapGroupMemberAssocAttr memberUid";
     OCC "ldap:set-config s01 ldapLoginFilter '(&(|(objectclass=inetOrgPerson))(|(uid=%uid)(|(mail=%uid))))'";
@@ -94,7 +170,7 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapBaseUsers ".$sssd->userDN();
 
     OCC "ldap:set-config s01 ldapGroupDisplayName cn";
-    OCC "ldap:set-config s01 ldapGroupFilter ' (&(objectClass=group)(groupType:1.2.840.113556.1.4.803:=2))'";
+    OCC "ldap:set-config s01 ldapGroupFilter '$group_filter'";
     OCC "ldap:set-config s01 ldapGroupFilterObjectclass group";
     OCC "ldap:set-config s01 ldapGroupMemberAssocAttr member";
     OCC "ldap:set-config s01 ldapLoginFilter '(&(&(|(objectclass=person)))(|(sAMAccountName=%uid)(userPrincipalName=%uid)))'";
@@ -106,7 +182,7 @@ if ($sssd->isLdap()) {
     OCC "ldap:set-config s01 ldapUserFilterObjectclass person";
     OCC "ldap:set-config s01 ldapEmailAttribute userPrincipalname";
     OCC "ldap:set-config s01 turnOffCertCheck 1";
-    OCC "ldap:set-config s01 useMemberOfToDetectMembership 0";
+    OCC "ldap:set-config s01 useMemberOfToDetectMembership 1"; # expand all groups
     OCC "ldap:set-config s01 ldapConfigurationActive 1";
     OCC "ldap:set-config s01 ldapTLS 0"; # always disable starttls, AD does not support it
 } else {
