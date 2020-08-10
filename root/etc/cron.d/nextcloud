@@ -1,1 +1,1 @@
-*/5 * * * *   apache /usr/bin/scl enable rh-php73 -- php -f /usr/share/nextcloud/cron.php
+*/5 * * * *   apache /usr/bin/scl enable rh-php73 -- php -d memory_limit=512M -f /usr/share/nextcloud/cron.php
