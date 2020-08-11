@@ -3,7 +3,7 @@
 function OCC
 {
     params=$@;
-    source /opt/rh/rh-php72/enable
+    source /opt/rh/rh-php73/enable
     cd /usr/share/nextcloud/
     TERM=dumb runuser -s /bin/bash apache -c "php -dmemory_limit=512M ./occ $params"
 }

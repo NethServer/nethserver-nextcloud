@@ -1,21 +1,44 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.8.5
+Version: 1.12.3
 Release: 1%{?dist}
 License: GPL
-Source: %{name}-%{version}.tar.gz
+Source0: %{name}-%{version}.tar.gz
 Source1: %{name}.tar.gz
+
+%define nc_version 19.0.1
+Source2: https://download.nextcloud.com/server/releases/nextcloud-%{nc_version}.tar.bz2
+
 BuildArch: noarch
 URL: %{url_prefix}/%{name}
 
 BuildRequires: nethserver-devtools
 
-Requires: nextcloud >= 18.0.0
+Provides: nextcloud
+Obsoletes: nextcloud
 Requires: nethserver-httpd
 Requires: nethserver-mysql
-Requires: nethserver-rh-php72-php-fpm >= 1.1.0
+Requires: nethserver-rh-php73-php-fpm >= 1.0.0
 Requires: samba-client
-Requires: sclo-php72-php-smbclient
+
+# Required php packages
+Requires: rh-php73
+Requires: rh-php73-php-fpm
+Requires: rh-php73-php-gd
+Requires: rh-php73-php-pdo
+Requires: rh-php73-php-mbstring
+Requires: rh-php73-php-imagick
+
+# Recommended php packages
+Requires: rh-php73-php-intl
+Requires: rh-php73-php-gmp
+
+# Required php packages for specific apps
+Requires: rh-php73-php-ldap
+Requires: sclo-php73-php-smbclient
+
+# Required php packages for MariaDB
+Requires: rh-php73-php-pdo_mysql
 
 %description
 NethServer Nextcloud files and configuration.
@@ -32,6 +55,10 @@ sed -i 's/_RELEASE_/%{version}/' %{name}.json
 %install
 rm -rf %{buildroot}
 (cd root; find . -depth -print | cpio -dump %{buildroot})
+
+mkdir -p %{buildroot}/usr/share/nextcloud/{config,data,etc,assets,updater}
+tar xf %{SOURCE2} -C %{buildroot}/usr/share
+
 mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
 mkdir -p %{buildroot}/usr/share/cockpit/%{name}/
@@ -43,7 +70,7 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 %{genfilelist} %{buildroot} \
     --file /etc/sudoers.d/50_nsapi_nethserver_nextcloud 'attr(0440,root,root)' \
-    --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' > %{name}-%{version}-filelist
+    --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' | grep -v '/usr/share/nextcloud' > %{name}-%{version}-filelist
 
 
 %files -f %{name}-%{version}-filelist
@@ -51,10 +78,45 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %doc COPYING
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_nethserver_nextcloud
-%config(noreplace) %{_sysconfdir}/opt/rh/rh-php72/php-fpm.d/000-nextcloud.conf
-
+%config(noreplace) %{_sysconfdir}/opt/rh/rh-php73/php-fpm.d/000-nextcloud.conf
+%config(noreplace) %attr(0644,apache,apache) /usr/share/nextcloud/.user.ini
+%dir %attr(0755,root,apache) /usr/share/nextcloud
+%attr(-,apache,apache) /usr/share/nextcloud
+%attr(0755,apache,apache) /usr/share/nextcloud/occ
+%attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Mon Jul 20 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.12.3-1
+- Nextcloud 19.0.1 - NethServer/dev#6232
+
+* Thu Jul 09 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.12.2-1
+- Nextcloud facter. Remove useless "size" attribute - Bug Nethserver/dev#6225
+
+* Thu Jul 02 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.12.1-1
+- Human readable numbers in Cockpit dashboards - NethServer/dev#6206
+
+* Mon Jun 15 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.12.0-1
+- Nextcloud: files shared with group are not listed in the UI - Bug NethServer/dev#6202
+
+* Mon Jun 08 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.11.0-1
+- Nextcloud 19.0.0 - NethServer/dev#6178
+
+* Thu May 07 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.10.1-1
+- Nextcloud 18.0.4 - NethServer/dev#6155
+
+* Tue Apr 28 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.10.0-1
+- Update Nextcloud stack to PHP 7.3 - NethServer/dev#6120
+
+* Thu Mar 26 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.9.2-1
+- Nextcloud 18.0.3 - NethServer/dev#6098
+
+* Wed Mar 25 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.9.1-1
+- Nextcloud 18.0.2 - NethServer/dev#6095
+
+* Wed Feb 26 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.9.0-1
+- Nextcloud trusted domains are not deleted - Bug NethServer/dev#6067
+- NextCloud 18.0.1  - NethServer/dev#6062
+
 * Mon Jan 27 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.5-1
 - Update to Nextcloud 18 - NethServer/dev#6039
 
@@ -202,4 +264,3 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 * Mon Aug 01 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.0-1
 - First Nextcloud release - NethServer/dev#5055
-

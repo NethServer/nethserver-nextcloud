@@ -62,16 +62,20 @@ The database is automatically saved by ``nethserver-mysql``.
 OCC
 ===
 
-When using ``occ`` command, PHP 7.2 should be enabled inside the environment.
+When using ``occ`` command, PHP 7.3 should be enabled inside the environment.
 
 Invocation example: ::
 
-  su - apache -s /bin/bash -c "source /opt/rh/rh-php72/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
+  occ ldap:show-config"
 
-Log of rh-php72-fpm
+The ``occ`` command is just a wrapper around: ::
+
+  su - apache -s /bin/bash -c "source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
+
+Log of rh-php73-fpm
 ===================
 
-The log of rh-php72-fpm can be found at `/var/opt/rh/rh-php72/log/php-fpm/error-nextcloud.log`
+The log of rh-php73-fpm can be found at `/var/opt/rh/rh-php73/log/php-fpm/error-nextcloud.log`
 
 Cockpit API
 ===========
@@ -136,3 +140,15 @@ update
 ------
 
 Same input as validate.
+
+Full reinstall
+===============
+As with many other applications in NethServer, un-installing the Nextcloud application **does not** remove the settings, stored files, or the database. Here are the suggested steps to do a full un-install and re-install with a fresh configuration:
+
+1. Uninstall Nextcloud using the admin page
+2. Remove the packages: ``yum remove nethserver-nextcloud nextcloud``
+3. Drop the MySQL database: ``mysql -e "drop database nextcloud"``
+4. Remove the whole Nextcloud directory: ``rm -rf /usr/share/nextcloud/``
+5. Remove the e-smith DB configuration: ``config delete nextcloud``
+6. Remove the NethServer config directory: ``rm -rf /var/lib/nethserver/nextcloud``
+7. Install NextCloud from the Software Center

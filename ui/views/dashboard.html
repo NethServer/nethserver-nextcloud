@@ -75,7 +75,8 @@
         );
 
         $("#stats-version").text(success.stats.version);
-        $("#stats-users").text(success.stats.users);
+        $("#stats-users").text(humanFormat(success.stats.users));
+        $("#stats-users").attr('title', success.stats.users);
         if (success.stats.admin_pass_warn) {
           $("#password-warn").show();
         }
