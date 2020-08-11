@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.12.3
+Version: 1.12.4
 Release: 1%{?dist}
 License: GPL
 Source0: %{name}-%{version}.tar.gz
@@ -86,6 +86,9 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Tue Aug 11 2020 Stephane de Labrusse <stephdl@de-labrusse.fr> - 1.12.4-1
+- Nextcloud: Increase php memory for cron job - Bug NethServer/dev#6249
+
 * Mon Jul 20 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.12.3-1
 - Nextcloud 19.0.1 - NethServer/dev#6232
 
