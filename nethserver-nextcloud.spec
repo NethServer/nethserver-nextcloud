@@ -118,7 +118,7 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 * Wed Feb 26 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.9.0-1
 - Nextcloud trusted domains are not deleted - Bug NethServer/dev#6067
-- NextCloud 18.0.1  - NethServer/dev#6062
+- Nextcloud 18.0.1  - NethServer/dev#6062
 
 * Mon Jan 27 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.8.5-1
 - Update to Nextcloud 18 - NethServer/dev#6039
