@@ -1,8 +1,8 @@
 {
   "id": "nethserver-nextcloud",
-  "name": "NextCloud",
-  "summary": "Provides NextCloud for NethServer",
-  "description": "Provides NextCloud for NethServer",
+  "name": "Nextcloud",
+  "summary": "Provides Nextcloud for NethServer",
+  "description": "Provides Nextcloud for NethServer",
   "url": "",
   "homepage": "https://github.com/NethServer/nethserver-nextcloud",
   "provides": ["nethserver-nextcloud"],
