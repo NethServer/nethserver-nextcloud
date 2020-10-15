@@ -22,10 +22,8 @@ require 'rubygems'
 
 Facter.add('nextcloud') do
     setcode do
-        nextcloud = {}
-        pass = File.read("/var/lib/nethserver/secrets/nextcloud").strip
-        users = Facter::Core::Execution.exec("mysql -BN -u nextcloud -p#{pass} nextcloud -e \"select count(*) from oc_accounts where uid != 'admin'\"")
-        nextcloud['users'] = users.to_i
-        nextcloud
+        # Count nextcloud users, excluding "admin", "admin@" and never-logged-in users
+        users = Facter::Core::Execution.execute("occ user:list -i --output=json  | jq 'map(if .email[0:6] != \"admin@\" and .user_id != \"admin\" and .last_seen != \"1970-01-01T00:00:00+00:00\" then . else empty end) | length'", :timeout => 30)
+        nextcloud = { "users" => users.to_i }
     end
 end
