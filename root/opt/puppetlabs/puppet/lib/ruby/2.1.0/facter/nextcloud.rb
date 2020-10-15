@@ -19,11 +19,25 @@
 #
 
 require 'rubygems'
+require 'json'
 
 Facter.add('nextcloud') do
     setcode do
-        # Count nextcloud users, excluding "admin", "admin@" and never-logged-in users
-        users = Facter::Core::Execution.execute("occ user:list -i --output=json  | jq 'map(if .email[0:6] != \"admin@\" and .user_id != \"admin\" and .last_seen != \"1970-01-01T00:00:00+00:00\" then . else empty end) | length'", :timeout => 30)
-        nextcloud = { "users" => users.to_i }
+        users_count = 0
+        begin
+            # Count nextcloud users, excluding "admin", "admin@" and never-logged-in users
+            users_list = Facter::Core::Execution.execute("occ user:list -i --output=json", :timeout => 30)
+            JSON.parse(users_list).each do |uid, item|
+                next if uid == "admin"
+                next if item["email"][0..5] == "admin@"
+                next if item["last_seen"] == "1970-01-01T00:00:00+00:00"
+                users_count += 1
+            end
+        rescue Facter::Core::Execution::ExecutionFailure
+            users_count = nil
+        rescue JSON::ParserError
+            users_count = nil
+        end
+        nextcloud = { "users" => users_count }
     end
 end
