@@ -27,6 +27,9 @@ Properties:
 * ``VirtualHost``: set custom virtual host, e.g. `mycloud.mydomain.it`
 * ``Wellknown``: can be ``enabled`` or ``disabled``. If enabled, add redirects for calDAV and cardDAV.
   This property has effect only if ``VirtualHost`` is empty.
+* ``HonorAdStartTls``: can be ``enabled`` or ``disabled``.  The StartTLS option from SSSD
+  configuration was historyically ignored. If set to ``enabled``, the ``sssd/StartTls`` prop value
+  is honored.
 
 
 Admin user
