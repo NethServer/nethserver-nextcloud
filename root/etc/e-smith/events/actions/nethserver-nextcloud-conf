@@ -36,6 +36,15 @@ else
     if [ -f /usr/share/nextcloud/.htaccess.rpmnew ]; then
         rm -f /usr/share/nextcloud/.htaccess.rpmnew
     fi
+
+    # Disable mail app when upgrading from NC 19: https://github.com/nextcloud/mail/issues/3727
+    if OCC app:list | grep -q -- '- mail:'; then
+        echo "[NOTICE] Disabling mail app"
+        OCC app:disable mail
+    fi
+    echo "[NOTICE] Disabling theme app"
+    OCC app:disable theming
+
     OCC "maintenance:mode --on"
     OCC "upgrade"
     OCC "maintenance:mode --off"
