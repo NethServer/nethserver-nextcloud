@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.14.2
+Version: 1.15.0
 Release: 1%{?dist}
 License: GPL
 Source0: %{name}-%{version}.tar.gz
@@ -86,6 +86,11 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Wed Nov 18 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.15.0-1
+- New NethServer 7.9.2009 defaults - NethServer/dev#6320
+- Nextcloud 20.0.1 - NethServer/dev#6314
+- StartTLS settings not honored by NextCloud conf - NethServer/dev#6318
+
 * Tue Nov 03 2020 Davide Principi <davide.principi@nethesis.it> - 1.14.2-1
 - StartTLS settings not honored by NextCloud conf - NethServer/dev#6318
 
