@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.16.0
+Version: 1.16.1
 Release: 1%{?dist}
 License: GPL
 Source0: %{name}-%{version}.tar.gz
@@ -86,6 +86,9 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Thu Dec 17 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.16.1-1
+- Nextcloud 20.0.4 - NethServer/dev#6363
+
 * Mon Nov 30 2020 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.16.0-1
 - Nextcloud 20.0.2 - NethServer/dev#6340
 - PHP-fpm: php script use a bad file path with '//' - Bug NethServer/dev#6339
