@@ -113,6 +113,9 @@ if($sssd->isLdap()) {
         'filter' => '(objectClass=group)',
         'default_filter' => '(&(objectClass=group)(groupType:1.2.840.113556.1.4.803:=2))'
     );
+} else {
+    # SSSD provider not configured, nothing to do
+    exit 0;
 }
 
 
