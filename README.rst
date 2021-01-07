@@ -153,5 +153,5 @@ As with many other applications in NethServer, un-installing the Nextcloud appli
 3. Drop the MySQL database: ``mysql -e "drop database nextcloud"``
 4. Remove the whole Nextcloud directory: ``rm -rf /usr/share/nextcloud/``
 5. Remove the e-smith DB configuration: ``config delete nextcloud``
-6. Remove the NethServer config directory: ``rm -rf /var/lib/nethserver/nextcloud``
+6. Remove the NethServer config directory (WARNING: will remove user data): ``rm -rf /var/lib/nethserver/nextcloud``
 7. Install Nextcloud from the Software Center
