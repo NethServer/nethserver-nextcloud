@@ -42,8 +42,6 @@ else
         echo "[NOTICE] Disabling mail app"
         OCC app:disable mail
     fi
-    echo "[NOTICE] Disabling theme app"
-    OCC app:disable theming
 
     OCC "maintenance:mode --on"
     OCC "upgrade"
