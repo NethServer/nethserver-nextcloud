@@ -35,6 +35,7 @@ event_templates("nethserver-nextcloud-update", qw(
   /etc/httpd/conf.d/default-virtualhost.inc
   /etc/httpd/conf.d/nextcloud.conf
   /etc/httpd/conf.d/zz_nextcloud.conf
+  /etc/opt/rh/rh-mariadb105/my.cnf.d/mariadb-server.cnf
 ));
 
 event_services("nethserver-nextcloud-update", qw(

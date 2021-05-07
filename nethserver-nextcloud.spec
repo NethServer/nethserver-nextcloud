@@ -6,7 +6,7 @@ License: GPL
 Source0: %{name}-%{version}.tar.gz
 Source1: %{name}.tar.gz
 
-%define nc_version 20.0.10
+%define nc_version 21.0.1
 Source2: https://download.nextcloud.com/server/releases/nextcloud-%{nc_version}.tar.bz2
 
 BuildArch: noarch
@@ -17,7 +17,7 @@ BuildRequires: nethserver-devtools
 Provides: nextcloud
 Obsoletes: nextcloud
 Requires: nethserver-httpd
-Requires: nethserver-mysql
+Requires: nethserver-rh-mariadb105
 Requires: nethserver-rh-php73-php-fpm >= 1.0.0
 Requires: samba-client
 
@@ -70,7 +70,7 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
 %{genfilelist} %{buildroot} \
     --file /etc/sudoers.d/50_nsapi_nethserver_nextcloud 'attr(0440,root,root)' \
-    --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' | grep -v '/usr/share/nextcloud' > %{name}-%{version}-filelist
+    --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' | grep -v -e '/usr/share/nextcloud' -e '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud' > %{name}-%{version}-filelist
 
 
 %files -f %{name}-%{version}-filelist

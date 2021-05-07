@@ -1,4 +1,8 @@
 #!/bin/bash
+source /opt/rh/rh-mariadb105/enable
+PATH=$PATH:/opt/rh/rh-mariadb105/root/usr/bin/
+
+export PATH
 
 function OCC
 {
@@ -11,9 +15,10 @@ function OCC
 password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
 
 # initialize grants mysql nextcloud database
-/usr/bin/mysql --defaults-file=/root/.my.cnf -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
-/usr/bin/mysql --defaults-file=/root/.my.cnf -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
-/usr/bin/mysql --defaults-file=/root/.my.cnf -e "FLUSH PRIVILEGES"
+mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
+mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
+mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "FLUSH PRIVILEGES"
 
 # check if we are migrating from release 10 to 11
 if [ -f /var/www/html/nextcloud/config/config.php ]; then
@@ -21,10 +26,10 @@ if [ -f /var/www/html/nextcloud/config/config.php ]; then
     rm -rf /var/www/html/nextcloud/
 fi
 
-res=`/usr/bin/mysql --defaults-file=/root/.my.cnf -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`;
+res=`mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`;
 
 if [[ $res == '0' ]]; then
-    OCC "maintenance:install --database mysql --database-name nextcloud --database-user nextcloud --database-pass $password --admin-user admin --admin-pass  Nethesis,1234 --data-dir /var/lib/nethserver/nextcloud/"
+    OCC "maintenance:install --database mysql --database-name nextcloud --database-user nextcloud --database-pass $password --database-host=localhost:/var/lib/mysql/nextcloud-mysql.sock --admin-user admin --admin-pass  Nethesis,1234 --data-dir /var/lib/nethserver/nextcloud/"
 
     OCC "app:enable user_ldap"
     OCC "ldap:create-empty-config" # create config with empty id
