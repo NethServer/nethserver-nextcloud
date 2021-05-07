@@ -14,6 +14,21 @@ function OCC
 
 password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
 
+systemctl is-active --quiet rh-mariadb105-mariadb@nextcloud
+if [[ $? -ne 0 ]]; then
+    systemctl start rh-mariadb105-mariadb@nextcloud
+    max_wait=20
+    wait=0
+    while ! mysql --socket /var/lib/mysql/nextcloud-mysql.sock -e "SHOW DATABASES" 2>/dev/null; do
+        sleep 1
+        wait=$((wait+1))
+        if [ $wait -ge $max_wait ]; then
+            echo "[ERROR] Can't start rh-mariadb105-mariadb@nextcloud"
+            exit 1
+        fi
+    done
+fi
+
 # initialize grants mysql nextcloud database
 mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
 mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
