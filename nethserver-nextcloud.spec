@@ -68,6 +68,8 @@ tar xvf %{SOURCE1} -C %{buildroot}/usr/share/cockpit/%{name}/
 cp -a %{name}.json %{buildroot}/usr/share/cockpit/nethserver/applications/
 cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
+mkdir -p %{buildroot}/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
+
 %{genfilelist} %{buildroot} \
     --file /etc/sudoers.d/50_nsapi_nethserver_nextcloud 'attr(0440,root,root)' \
     --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' | grep -v -e '/usr/share/nextcloud' -e '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud' > %{name}-%{version}-filelist
@@ -81,6 +83,7 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %config(noreplace) %{_sysconfdir}/opt/rh/rh-php73/php-fpm.d/000-nextcloud.conf
 %config(noreplace) %attr(0644,apache,apache) /usr/share/nextcloud/.user.ini
 %dir %attr(0755,root,apache) /usr/share/nextcloud
+%dir %attr(0755,mysql,mysql) /var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
 %attr(-,apache,apache) /usr/share/nextcloud
 %attr(0755,apache,apache) /usr/share/nextcloud/occ
 %attr(0775,apache,apache) /usr/share/nextcloud/data
