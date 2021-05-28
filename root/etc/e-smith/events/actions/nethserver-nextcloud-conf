@@ -29,7 +29,10 @@ if [[ $? -ne 0 ]]; then
     done
 fi
 
-if [[ -d '/var/lib/mysql/nextcloud' ]]; then 
+if [[ -d '/var/lib/mysql/nextcloud' ]]; then
+
+    OCC "maintenance:mode --on"
+
     tmp_sql=`mktemp`
     /usr/bin/mysqldump --databases nextcloud > $tmp_sql
     if [[ $? -ne 0 ]]; then
@@ -51,7 +54,8 @@ if [[ -d '/var/lib/mysql/nextcloud' ]]; then
         echo "[ERROR] Error while upgrading nextcloud database"
         exit 1
     fi
-    if [[ -d '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud/' ]]; then 
+    if [[ -d '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud/' ]]; then
+        OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
         /usr/bin/mysql -e "drop database nextcloud;"
         rm -f $tmp_sql
     fi
@@ -83,9 +87,6 @@ else
     if [ -f /usr/share/nextcloud/.htaccess.rpmnew ]; then
         rm -f /usr/share/nextcloud/.htaccess.rpmnew
     fi
-
-    # adjust the correct socket we cannot use config:system:set dbhost until nextcloud knows where is its database
-    sed -i "s|'dbhost'\s\+=>\s\+'localhost'|'dbhost' => 'localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock'|" /usr/share/nextcloud/config/config.php
 
     # Disable mail app when upgrading from NC 19: https://github.com/nextcloud/mail/issues/3727
     if OCC app:list | grep -q -- '- mail:'; then
