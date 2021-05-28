@@ -17,7 +17,7 @@ BuildRequires: nethserver-devtools
 Provides: nextcloud
 Obsoletes: nextcloud
 Requires: nethserver-httpd
-Requires: nethserver-rh-mariadb105
+Requires: nethserver-rh-mariadb105 rh-mariadb105-mariadb-server-utils
 Requires: nethserver-rh-php73-php-fpm >= 1.0.0
 Requires: samba-client
 
