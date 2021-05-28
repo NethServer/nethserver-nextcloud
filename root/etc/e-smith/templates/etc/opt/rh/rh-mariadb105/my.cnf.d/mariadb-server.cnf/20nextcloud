@@ -1,6 +1,6 @@
 [mysqld.nextcloud]
 datadir=/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
-socket=/var/lib/mysql/nextcloud-mysql.sock
+socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock
 log-error=/var/opt/rh/rh-mariadb105/log/mariadb/nextcloud.log
 pid-file=/run/rh-mariadb105-mariadb/mariadb-nextcloud.pid
 skip-networking

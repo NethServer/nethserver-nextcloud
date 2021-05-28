@@ -19,7 +19,7 @@ if [[ $? -ne 0 ]]; then
     systemctl start rh-mariadb105-mariadb@nextcloud
     max_wait=20
     wait=0
-    while ! mysql --socket /var/lib/mysql/nextcloud-mysql.sock -e "SHOW DATABASES" 2>/dev/null; do
+    while ! mysql --socket /run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "SHOW DATABASES" 2>/dev/null; do
         sleep 1
         wait=$((wait+1))
         if [ $wait -ge $max_wait ]; then
@@ -29,11 +29,39 @@ if [[ $? -ne 0 ]]; then
     done
 fi
 
+if [[ -d '/var/lib/mysql/nextcloud' ]]; then 
+    tmp_sql=`mktemp`
+    /usr/bin/mysqldump --databases nextcloud > $tmp_sql
+    if [[ $? -ne 0 ]]; then
+        echo "[ERROR] Error while dumping nextcloud database from mariadb55"
+        exit 1
+    fi
+    if [[ ! -f $tmp_sql ]]; then
+        echo "[ERROR] There is no dumped nextcloud database"
+        exit 1
+    fi
+    mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
+    mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --database nextcloud < $tmp_sql
+    if [[ $? -ne 0 ]]; then
+        echo "[ERROR] Error while restoring nextcloud database to SCL mariadb105"
+        exit 1
+    fi
+    mysql_upgrade --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --force
+    if [[ $? -ne 0 ]]; then
+        echo "[ERROR] Error while upgrading nextcloud database"
+        exit 1
+    fi
+    if [[ -d '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud/' ]]; then 
+        /usr/bin/mysql -e "drop database nextcloud;"
+        rm -f $tmp_sql
+    fi
+fi
+
 # initialize grants mysql nextcloud database
-mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
-mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
-mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
-mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "FLUSH PRIVILEGES"
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "FLUSH PRIVILEGES"
 
 # check if we are migrating from release 10 to 11
 if [ -f /var/www/html/nextcloud/config/config.php ]; then
@@ -41,10 +69,9 @@ if [ -f /var/www/html/nextcloud/config/config.php ]; then
     rm -rf /var/www/html/nextcloud/
 fi
 
-res=`mysql --socket=/var/lib/mysql/nextcloud-mysql.sock -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`;
-
+res=`mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`;
 if [[ $res == '0' ]]; then
-    OCC "maintenance:install --database mysql --database-name nextcloud --database-user nextcloud --database-pass $password --database-host=localhost:/var/lib/mysql/nextcloud-mysql.sock --admin-user admin --admin-pass  Nethesis,1234 --data-dir /var/lib/nethserver/nextcloud/"
+    OCC "maintenance:install --database mysql --database-name nextcloud --database-user nextcloud --database-pass $password --database-host=localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --admin-user admin --admin-pass  Nethesis,1234 --data-dir /var/lib/nethserver/nextcloud/"
 
     OCC "app:enable user_ldap"
     OCC "ldap:create-empty-config" # create config with empty id
@@ -57,6 +84,9 @@ else
         rm -f /usr/share/nextcloud/.htaccess.rpmnew
     fi
 
+    # adjust the correct socket we cannot use config:system:set dbhost until nextcloud knows where is its database
+    sed -i "s|'dbhost'\s\+=>\s\+'localhost'|'dbhost' => 'localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock'|" /usr/share/nextcloud/config/config.php
+
     # Disable mail app when upgrading from NC 19: https://github.com/nextcloud/mail/issues/3727
     if OCC app:list | grep -q -- '- mail:'; then
         echo "[NOTICE] Disabling mail app"
@@ -64,6 +94,11 @@ else
     fi
 
     OCC "maintenance:mode --on"
+
+    #Enabling MySQL 4-byte support
+    OCC "config:system:set mysql.utf8mb4 --type boolean --value='true'"
+    OCC "maintenance:repair"
+
     OCC "upgrade"
     OCC "maintenance:mode --off"
     OCC "integrity:check-core"
