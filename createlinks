@@ -61,3 +61,12 @@ event_actions("nethserver-nextcloud-save", qw(
 event_actions("interface-update", qw(
   nethserver-nextcloud-occ-conf 91
 ));
+
+# link to backup and restore event
+event_actions("pre-backup-data", qw(
+  nethserver-nextcloud-rh-mariadb105-dump-database 60
+));
+
+event_actions("post-restore-data", qw(
+  nethserver-nextcloud-restore-rh-mariadb105-database 03
+));
