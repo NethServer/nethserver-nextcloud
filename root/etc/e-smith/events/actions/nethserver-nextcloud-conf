@@ -58,14 +58,22 @@ if [[ -d '/var/lib/mysql/nextcloud' ]]; then
         OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
         /usr/bin/mysql -e "drop database nextcloud;"
         rm -f $tmp_sql
-    fi
-fi
 
-# initialize grants mysql nextcloud database
-mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
-mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
-mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
-mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "FLUSH PRIVILEGES"
+        # Alter database for migration
+        mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+        mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
+        mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "FLUSH PRIVILEGES"
+        #Enabling MySQL 4-byte support
+        OCC "config:system:set mysql.utf8mb4 --type boolean --value='true'"
+        OCC "maintenance:repair"
+    fi
+else
+    # initialize grants mysql nextcloud database
+    mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
+    mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+    mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
+    mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "FLUSH PRIVILEGES"
+fi
 
 # check if we are migrating from release 10 to 11
 if [ -f /var/www/html/nextcloud/config/config.php ]; then
@@ -95,10 +103,6 @@ else
     fi
 
     OCC "maintenance:mode --on"
-
-    #Enabling MySQL 4-byte support
-    OCC "config:system:set mysql.utf8mb4 --type boolean --value='true'"
-    OCC "maintenance:repair"
 
     OCC "upgrade"
     OCC "maintenance:mode --off"
