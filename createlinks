@@ -41,6 +41,7 @@ event_templates("nethserver-nextcloud-update", qw(
 event_services("nethserver-nextcloud-update", qw(
   httpd restart
   rh-php73-php-fpm restart
+  rh-mariadb105-mariadb@nextcloud restart 
 ));
 
 event_templates("nethserver-nextcloud-save", qw(
