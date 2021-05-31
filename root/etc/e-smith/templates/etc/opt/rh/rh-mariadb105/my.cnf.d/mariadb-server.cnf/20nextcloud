@@ -1,7 +1,7 @@
 [mysqld.nextcloud]
 datadir=/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
 socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock
-log-error=/var/opt/rh/rh-mariadb105/log/mariadb/nextcloud.log
+log-error=/var/log/rh-mariadb105/nextcloud.log
 pid-file=/run/rh-mariadb105-mariadb/mariadb-nextcloud.pid
 skip-networking
 character_set_server = utf8mb4
