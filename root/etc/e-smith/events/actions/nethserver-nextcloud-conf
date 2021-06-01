@@ -12,6 +12,12 @@ function OCC
     TERM=dumb runuser -s /bin/bash apache -c "php -dmemory_limit=512M ./occ $params"
 }
 
+exitOnError () {
+    echo $1
+    OCC "maintenance:mode --off"
+    exit 1
+}
+
 password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
 
 systemctl is-active --quiet rh-mariadb105-mariadb@nextcloud
@@ -36,23 +42,19 @@ if [[ -d '/var/lib/mysql/nextcloud' ]]; then
     tmp_sql=`mktemp`
     /usr/bin/mysqldump --databases nextcloud > $tmp_sql
     if [[ $? -ne 0 ]]; then
-        echo "[ERROR] Error while dumping nextcloud database from mariadb55"
-        exit 1
+        exitOnError "[ERROR] Error while dumping nextcloud database from mariadb55"
     fi
     if [[ ! -f $tmp_sql ]]; then
-        echo "[ERROR] There is no dumped nextcloud database"
-        exit 1
+        exitOnError "[ERROR] There is no dumped nextcloud database"
     fi
     mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
     mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --database nextcloud < $tmp_sql
     if [[ $? -ne 0 ]]; then
-        echo "[ERROR] Error while restoring nextcloud database to SCL mariadb105"
-        exit 1
+        exitOnError "[ERROR] Error while restoring nextcloud database to SCL mariadb105"
     fi
     mysql_upgrade --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --force
     if [[ $? -ne 0 ]]; then
-        echo "[ERROR] Error while upgrading nextcloud database"
-        exit 1
+        exitOnError "[ERROR] Error while upgrading nextcloud database"
     fi
     if [[ -d '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud/' ]]; then
         OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
