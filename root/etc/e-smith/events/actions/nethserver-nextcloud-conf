@@ -36,26 +36,36 @@ if [[ $? -ne 0 ]]; then
 fi
 
 if [[ -d '/var/lib/mysql/nextcloud' ]]; then
-
+    # we still use mariadb55, this is wrong we need rh-mariadb105
     OCC "maintenance:mode --on"
-
     tmp_sql=`mktemp`
+
+    # Dump the mariadb55 nextcloud database or exit on error
     /usr/bin/mysqldump --databases nextcloud > $tmp_sql
     if [[ $? -ne 0 ]]; then
         exitOnError "[ERROR] Error while dumping nextcloud database from mariadb55"
     fi
+ 
+    # We got the dump or exit on error
     if [[ ! -f $tmp_sql ]]; then
         exitOnError "[ERROR] There is no dumped nextcloud database"
     fi
+ 
+    # Create the database in rh-mariadb105 and import the dump from mariadb55 or exit on error
     mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
     mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --database nextcloud < $tmp_sql
     if [[ $? -ne 0 ]]; then
         exitOnError "[ERROR] Error while restoring nextcloud database to SCL mariadb105"
     fi
+ 
+    # we need to upgrade mariadb55 to mariadb105 or exit on error 
+    # https://access.redhat.com/documentation/en-us/red_hat_software_collections/3/html/3.3_release_notes/chap-migration
     mysql_upgrade --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --force
     if [[ $? -ne 0 ]]; then
         exitOnError "[ERROR] Error while upgrading nextcloud database"
     fi
+ 
+    # rh-mariadb105 is created,migrated,updated we can remove mariadb55 and use the socket in nextcloud for the new database
     if [[ -d '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud/' ]]; then
         OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
         /usr/bin/mysql -e "drop database nextcloud;"
