@@ -20,7 +20,6 @@
 #
 
 source /opt/rh/rh-mariadb105/enable
-PATH=$PATH:/opt/rh/rh-mariadb105/root/usr/bin/
 
 if [[ ! -f '/var/lib/nethserver/backup/rh-mariadb105/nextcloud.sql' ]]; then
     echo "[ERROR] Error the nextcloud SCL mariadb105 dump does not exist"

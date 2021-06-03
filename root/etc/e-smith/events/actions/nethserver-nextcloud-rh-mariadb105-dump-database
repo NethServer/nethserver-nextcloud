@@ -20,7 +20,6 @@
 #
 
 source /opt/rh/rh-mariadb105/enable
-PATH=$PATH:/opt/rh/rh-mariadb105/root/usr/bin/
 
 umask 0027
 backup_dir=/var/lib/nethserver/backup/rh-mariadb105/
