@@ -31,8 +31,13 @@ if [[ $? -ne 0 ]]; then
         fi
     done
 fi
+# verify if the db exists and if mysql is installed
+database=""
+if [[ -x '/usr/bin/mysql' ]]; then
+    database=$(/usr/bin/mysql -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'nextcloud'")
+fi
 
-if [[ -d '/var/lib/mysql/nextcloud' ]]; then
+if [[ -n $database ]]; then
     # we still use mariadb55, this is wrong we need rh-mariadb105
     OCC "maintenance:mode --on"
     tmp_sql=`mktemp`
