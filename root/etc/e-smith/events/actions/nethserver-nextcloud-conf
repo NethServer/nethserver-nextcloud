@@ -28,7 +28,7 @@ if [[ $? -ne 0 ]]; then
     while ! mysql --socket /run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "SHOW DATABASES" 2>/dev/null; do
         sleep 1
         wait=$((wait+1))
-        if [ $wait -ge $max_wait ]; then
+        if [[ $wait -ge $max_wait ]]; then
             echo "[ERROR] Can't start rh-mariadb105-mariadb@nextcloud"
             exit 1
         fi
@@ -39,6 +39,7 @@ if [[ -d '/var/lib/mysql/nextcloud' ]]; then
     # we still use mariadb55, this is wrong we need rh-mariadb105
     OCC "maintenance:mode --on"
     tmp_sql=`mktemp`
+    trap "rm -f $tmp_sql" EXIT
 
     # Dump the mariadb55 nextcloud database or exit on error
     /usr/bin/mysqldump --databases nextcloud > $tmp_sql
@@ -69,7 +70,6 @@ if [[ -d '/var/lib/mysql/nextcloud' ]]; then
     if [[ -d '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud/' ]]; then
         OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
         /usr/bin/mysql -e "drop database nextcloud;"
-        rm -f $tmp_sql
 
         # Alter database for migration
         mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
