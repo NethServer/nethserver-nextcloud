@@ -18,6 +18,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NethServer.  If not, see <http://www.gnu.org/licenses/>.
 #
+# exit when any command fails
+set -e
+
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+# echo an error message before exiting
+trap 'echo "Error while restoring nextcloud database to SCL mariadb105: \"${last_command}\" command filed with exit code $?."' EXIT
 
 source /opt/rh/rh-mariadb105/enable
 
@@ -32,10 +39,5 @@ mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --database nextcl
 mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
 mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
 mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "FLUSH PRIVILEGES"
-
-if [[ $? -ne 0 ]]; then
-    echo "[ERROR] Error while restoring nextcloud database to SCL mariadb105"
-    exit 1
-fi
 
 rm -f /var/lib/nethserver/backup/rh-mariadb105/nextcloud.sql
