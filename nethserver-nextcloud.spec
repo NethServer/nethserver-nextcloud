@@ -6,7 +6,7 @@ License: GPL
 Source0: %{name}-%{version}.tar.gz
 Source1: %{name}.tar.gz
 
-%define nc_version 20.0.10
+%define nc_version 21.0.2
 Source2: https://download.nextcloud.com/server/releases/nextcloud-%{nc_version}.tar.bz2
 
 BuildArch: noarch
@@ -17,7 +17,7 @@ BuildRequires: nethserver-devtools
 Provides: nextcloud
 Obsoletes: nextcloud
 Requires: nethserver-httpd
-Requires: nethserver-mysql
+Requires: nethserver-rh-mariadb105 rh-mariadb105-mariadb-server-utils
 Requires: nethserver-rh-php73-php-fpm >= 1.0.0
 Requires: samba-client
 
@@ -68,9 +68,11 @@ tar xvf %{SOURCE1} -C %{buildroot}/usr/share/cockpit/%{name}/
 cp -a %{name}.json %{buildroot}/usr/share/cockpit/nethserver/applications/
 cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 
+mkdir -p %{buildroot}/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
+
 %{genfilelist} %{buildroot} \
     --file /etc/sudoers.d/50_nsapi_nethserver_nextcloud 'attr(0440,root,root)' \
-    --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' | grep -v '/usr/share/nextcloud' > %{name}-%{version}-filelist
+    --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' | grep -v -e '/usr/share/nextcloud' -e '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud' > %{name}-%{version}-filelist
 
 
 %files -f %{name}-%{version}-filelist
@@ -81,6 +83,7 @@ cp -a api/* %{buildroot}/usr/libexec/nethserver/api/%{name}/
 %config(noreplace) %{_sysconfdir}/opt/rh/rh-php73/php-fpm.d/000-nextcloud.conf
 %config(noreplace) %attr(0644,apache,apache) /usr/share/nextcloud/.user.ini
 %dir %attr(0755,root,apache) /usr/share/nextcloud
+%dir %attr(0755,mysql,mysql) /var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
 %attr(-,apache,apache) /usr/share/nextcloud
 %attr(0755,apache,apache) /usr/share/nextcloud/occ
 %attr(0775,apache,apache) /usr/share/nextcloud/data

@@ -35,11 +35,13 @@ event_templates("nethserver-nextcloud-update", qw(
   /etc/httpd/conf.d/default-virtualhost.inc
   /etc/httpd/conf.d/nextcloud.conf
   /etc/httpd/conf.d/zz_nextcloud.conf
+  /etc/opt/rh/rh-mariadb105/my.cnf.d/mariadb-server.cnf
 ));
 
 event_services("nethserver-nextcloud-update", qw(
   httpd restart
   rh-php73-php-fpm restart
+  rh-mariadb105-mariadb@nextcloud restart 
 ));
 
 event_templates("nethserver-nextcloud-save", qw(
@@ -59,4 +61,13 @@ event_actions("nethserver-nextcloud-save", qw(
 
 event_actions("interface-update", qw(
   nethserver-nextcloud-occ-conf 91
+));
+
+# link to backup and restore event
+event_actions("pre-backup-data", qw(
+  nethserver-nextcloud-rh-mariadb105-dump-database 60
+));
+
+event_actions("post-restore-data", qw(
+  nethserver-nextcloud-restore-rh-mariadb105-database 03
 ));

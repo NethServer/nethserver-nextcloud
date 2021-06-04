@@ -1,0 +1,19 @@
+# This logname can be set in /etc/my.cnf
+# by setting the variable "log-error"
+# in the [mysqld] section as follows:
+#
+# [mysqld]
+# log-error=/var/log/rh-mariadb105/nextcloud.log
+
+/var/log/rh-mariadb105/nextcloud.log {
+        create 600 mysql mysql
+        notifempty
+        missingok
+    postrotate
+	# just if mariadbd is really running
+        if [ -e /run/rh-mariadb105-mariadb/mariadb-nextcloud.pid ]
+        then
+           kill -1 $(</run/rh-mariadb105-mariadb/mariadb-nextcloud.pid)
+        fi
+    endscript
+}

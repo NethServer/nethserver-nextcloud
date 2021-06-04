@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# Copyright (C) 2021 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see <http://www.gnu.org/licenses/>.
+#
+# exit when any command fails
+set -e
+
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+# echo an error message before exiting
+trap 'echo "Error while restoring nextcloud database to SCL mariadb105: \"${last_command}\" command filed with exit code $?."' EXIT
+
+source /opt/rh/rh-mariadb105/enable
+
+if [[ ! -f '/var/lib/nethserver/backup/rh-mariadb105/nextcloud.sql' ]]; then
+    echo "[ERROR] Error the nextcloud SCL mariadb105 dump does not exist"
+    exit 1
+fi
+
+password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "CREATE DATABASE IF NOT EXISTS nextcloud;"
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --database nextcloud < /var/lib/nethserver/backup/rh-mariadb105/nextcloud.sql
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "ALTER DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "grant all on nextcloud.* to 'nextcloud'@'localhost' identified by '$password';"
+mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "FLUSH PRIVILEGES"
+
+rm -f /var/lib/nethserver/backup/rh-mariadb105/nextcloud.sql
