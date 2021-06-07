@@ -15,6 +15,11 @@ exitOnError () {
     exit 1
 }
 
+databaseTest () {
+    # if the database is not initialized then databaseSCL == 0 else > 0
+    databaseSCL=`mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`
+}
+
 password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
 
 systemctl is-active --quiet rh-mariadb105-mariadb@nextcloud
@@ -40,6 +45,7 @@ fi
 if [[ -n $database ]]; then
     # we still use mariadb55, this is wrong we need rh-mariadb105
     OCC "maintenance:mode --on"
+
     tmp_sql=`mktemp`
     trap "rm -f $tmp_sql" EXIT
 
@@ -69,7 +75,10 @@ if [[ -n $database ]]; then
     fi
  
     # rh-mariadb105 is created,migrated,updated we can remove mariadb55 and use the socket in nextcloud for the new database
-    if [[ -d '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud/' ]]; then
+    # we test if the nextcloud database from SCL is not blank or wrong
+    databaseTest
+
+    if [[ $((databaseSCL)) -gt "0" ]]; then
         OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
         /usr/bin/mysql -e "drop database nextcloud;"
 
@@ -95,8 +104,10 @@ if [ -f /var/www/html/nextcloud/config/config.php ]; then
     rm -rf /var/www/html/nextcloud/
 fi
 
-res=`mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`;
-if [[ $res == '0' ]]; then
+# we test if the nextcloud database from SCL is not initialized or workable
+databaseTest
+
+if [[ $databaseSCL == '0' ]]; then
     OCC "maintenance:install --database mysql --database-name nextcloud --database-user nextcloud --database-pass $password --database-host=localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --admin-user admin --admin-pass  Nethesis,1234 --data-dir /var/lib/nethserver/nextcloud/"
 
     OCC "app:enable user_ldap"
