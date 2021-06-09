@@ -17,8 +17,12 @@ exitOnError () {
 }
 
 databaseTest () {
-    # if the database is not initialized then databaseSCL == 0 else > 0
-    databaseSCL=`mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`
+    out=$(mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -BN -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'")
+    if [[ $((out)) -gt "0" ]]; then
+        return 1
+    else
+        return 0
+    fi
 }
 
 password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
@@ -80,9 +84,8 @@ if [[ -n $database ]]; then
  
     # rh-mariadb105 is created,migrated,updated we can remove mariadb55 and use the socket in nextcloud for the new database
     # we test if the nextcloud database from SCL is not blank or wrong
-    databaseTest
 
-    if [[ $((databaseSCL)) -gt "0" ]]; then
+    if  ! databaseTest ; then
         OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
         /usr/bin/mysql -e "drop database nextcloud;"
 
@@ -111,9 +114,8 @@ if [ -f /var/www/html/nextcloud/config/config.php ]; then
 fi
 
 # we test if the nextcloud database from SCL is not initialized or workable
-databaseTest
 
-if [[ $databaseSCL == '0' ]]; then
+if databaseTest ; then
     OCC "maintenance:install --database mysql --database-name nextcloud --database-user nextcloud --database-pass $password --database-host=localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --admin-user admin --admin-pass  Nethesis,1234 --data-dir /var/lib/nethserver/nextcloud/"
 
     OCC "app:enable user_ldap"
