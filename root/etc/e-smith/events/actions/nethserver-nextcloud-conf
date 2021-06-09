@@ -11,8 +11,18 @@ function OCC
 
 exitOnError () {
     echo $1
+    OCC "app:enable accessibility"
     OCC "maintenance:mode --off"
     exit 1
+}
+
+databaseTest () {
+    out=$(mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -BN -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'")
+    if [[ $((out)) -gt "0" ]]; then
+        return 1
+    else
+        return 0
+    fi
 }
 
 password=`perl -e "use NethServer::Password; print NethServer::Password::store('nextcloud');"`
@@ -40,6 +50,10 @@ fi
 if [[ -n $database ]]; then
     # we still use mariadb55, this is wrong we need rh-mariadb105
     OCC "maintenance:mode --on"
+    # accessibility takes a lot of PHP ressources but is a mandatory 
+    # else white NC dashboard (nextcloud/server#25742)
+    OCC "app:disable accessibility"
+
     tmp_sql=`mktemp`
     trap "rm -f $tmp_sql" EXIT
 
@@ -69,7 +83,9 @@ if [[ -n $database ]]; then
     fi
  
     # rh-mariadb105 is created,migrated,updated we can remove mariadb55 and use the socket in nextcloud for the new database
-    if [[ -d '/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud/' ]]; then
+    # we test if the nextcloud database from SCL is not blank or wrong
+
+    if  ! databaseTest ; then
         OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
         /usr/bin/mysql -e "drop database nextcloud;"
 
@@ -80,6 +96,8 @@ if [[ -n $database ]]; then
         #Enabling MySQL 4-byte support
         OCC "config:system:set mysql.utf8mb4 --type boolean --value='true'"
         OCC "maintenance:repair"
+        # Enable back accessibility
+        OCC "app:enable accessibility"
     fi
 else
     # initialize grants mysql nextcloud database
@@ -95,8 +113,9 @@ if [ -f /var/www/html/nextcloud/config/config.php ]; then
     rm -rf /var/www/html/nextcloud/
 fi
 
-res=`mysql --socket=/run/rh-mariadb105-mariadb/nextcloud-mysql.sock -e "select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = 'nextcloud'" | tail -n1`;
-if [[ $res == '0' ]]; then
+# we test if the nextcloud database from SCL is not initialized or workable
+
+if databaseTest ; then
     OCC "maintenance:install --database mysql --database-name nextcloud --database-user nextcloud --database-pass $password --database-host=localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock --admin-user admin --admin-pass  Nethesis,1234 --data-dir /var/lib/nethserver/nextcloud/"
 
     OCC "app:enable user_ldap"
