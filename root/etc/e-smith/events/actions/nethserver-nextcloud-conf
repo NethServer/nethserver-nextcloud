@@ -49,6 +49,9 @@ fi
 
 if [[ -n $database ]]; then
     # we still use mariadb55, this is wrong we need rh-mariadb105
+
+    # Make sure loglevel is set to 2 (see https://github.com/nextcloud/server/pull/27334)
+    OCC "config:system:set loglevel --value=2 --type=integer"
     OCC "maintenance:mode --on"
     # accessibility takes a lot of PHP ressources but is a mandatory 
     # else white NC dashboard (nextcloud/server#25742)
@@ -87,6 +90,9 @@ if [[ -n $database ]]; then
 
     if  ! databaseTest ; then
         OCC config:system:set dbhost --value="localhost:/run/rh-mariadb105-mariadb/nextcloud-mysql.sock" --type="string"
+        if [[ $? -gt 0 ]]; then
+             exitOnError "[ERROR] Can't configure socket for mysql database"
+        fi
         /usr/bin/mysql -e "drop database nextcloud;"
 
         # Alter database for migration
