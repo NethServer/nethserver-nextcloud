@@ -9,6 +9,9 @@ Source1: %{name}.tar.gz
 %define nc_version 21.0.2
 Source2: https://download.nextcloud.com/server/releases/nextcloud-%{nc_version}.tar.bz2
 
+# See https://github.com/nextcloud/files_pdfviewer/issues/381
+Source3: https://raw.githubusercontent.com/nextcloud/files_pdfviewer/6d81ffbb65c3758bece144e0aff07b4a0ad20eef/js/files_pdfviewer-main.js
+
 BuildArch: noarch
 URL: %{url_prefix}/%{name}
 
@@ -58,6 +61,7 @@ rm -rf %{buildroot}
 
 mkdir -p %{buildroot}/usr/share/nextcloud/{config,data,etc,assets,updater}
 tar xf %{SOURCE2} -C %{buildroot}/usr/share
+cp %{SOURCE3} %{buildroot}/usr/share/nextcloud/apps/files_pdfviewer/js/files_pdfviewer-main.js
 
 mkdir -p %{buildroot}/var/lib/nethserver/nextcloud
 
