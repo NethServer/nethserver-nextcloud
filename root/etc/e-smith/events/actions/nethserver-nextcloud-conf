@@ -102,6 +102,8 @@ if [[ -n $database ]]; then
         #Enabling MySQL 4-byte support
         OCC "config:system:set mysql.utf8mb4 --type boolean --value='true'"
         OCC "maintenance:repair"
+        OCC "db:add-missing-primary-keys"
+        OCC "db:add-missing-columns"
         # Enable back accessibility
         OCC "app:enable accessibility"
     fi
