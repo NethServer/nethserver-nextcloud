@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.18.0
+Version: 1.19.0
 Release: 1%{?dist}
 License: GPL
 Source0: %{name}-%{version}.tar.gz
@@ -89,6 +89,9 @@ mkdir -p %{buildroot}/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
 %attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Tue Oct 05 2021 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.19.0-1
+- Nextcloud 22.2.0 - NethServer/dev#6576
+
 * Wed Sep 08 2021 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.18.0-1
 - Nextcloud 22.1.1 - NethServer/dev#6566
 
