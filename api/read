@@ -49,7 +49,7 @@ if ($action eq 'app-info') {
 } elsif ($action eq 'configuration') {
 
     # get stats
-    my $version = `/usr/local/sbin/occ status 2>/dev/null | grep version: | awk '{print \$3}'`;
+    my $version = `/usr/local/sbin/occ status 2>/dev/null | grep versionstring: | awk '{print \$3}'`;
     chomp($version);
     my $users = `/usr/local/sbin/occ user:list 2>/dev/null | wc -l`;
     chomp($users);
