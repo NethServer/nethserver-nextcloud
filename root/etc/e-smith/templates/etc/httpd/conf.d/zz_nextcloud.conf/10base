@@ -60,10 +60,9 @@
 
     if ($wellknown eq 'enabled' && $vhost eq '') {
         $OUT .= "  \n\n# Enable webdav redirect\n";
-        $OUT .= "  Redirect 301 /.well-known/host-meta /nextcloud/public.php?service=host-meta\n";
-        $OUT .= "  Redirect 301 /.well-known/host-meta.json /nextcloud/public.php?service=host-meta-json\n";
-        $OUT .= "  Redirect 301 /.well-known/webfinger /nextcloud/public.php?service=webfinger\n";
         $OUT .= "  Redirect 301 /.well-known/carddav /nextcloud/remote.php/dav/\n";
         $OUT .= "  Redirect 301 /.well-known/caldav /nextcloud/remote.php/dav/\n";
+        $OUT .= "  Redirect 301 /.well-known/webfinger /nextcloud/index.php/.well-known/webfinger\n";
+        $OUT .= "  Redirect 301 /.well-known/nodeinfo /nextcloud/index.php/.well-known/nodeinfo\n";
    }
 }
