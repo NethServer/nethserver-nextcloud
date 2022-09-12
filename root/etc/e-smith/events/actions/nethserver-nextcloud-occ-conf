@@ -76,6 +76,7 @@ OCC "config:system:set mail_domain --value=".$cdb->get_value('DomainName');
 OCC "config:system:set mail_smtphost --value=localhost";
 OCC "config:system:set mail_smtpport --value=25";
 OCC "config:system:set updatechecker --type bool --value false";
+OCC "config:system:set check_for_working_wellknown_setup --type bool --value false";
 OCC "background:cron";
 OCC "db:convert-filecache-bigint -n";
 
