@@ -30,6 +30,7 @@ Requires: php80-php-imagick
 # Recommended php packages
 Requires: php80-php-intl
 Requires: php80-php-gmp
+Requires: php80-php-sodium
 
 # Required php packages for specific apps
 Requires: php80-php-ldap
