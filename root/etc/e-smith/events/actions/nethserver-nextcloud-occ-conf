@@ -18,7 +18,7 @@ our @system_groups;
 sub OCC
 {
     my $params = join(" ", @_);
-    system("TERM=dumb su - apache -s /bin/bash -c \"source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php -d memory_limit=1024M -d apc.enable_cli=1 occ $params\"");
+    system("TERM=dumb su - apache -s /bin/bash -c \"source /opt/remi/php80/enable; cd /usr/share/nextcloud/; php -d memory_limit=1024M -d apc.enable_cli=1 occ $params\"");
 }
 
 sub _cb_group_push
@@ -75,6 +75,8 @@ OCC "config:system:set mail_from_address --value=no-reply";
 OCC "config:system:set mail_domain --value=".$cdb->get_value('DomainName');
 OCC "config:system:set mail_smtphost --value=localhost";
 OCC "config:system:set mail_smtpport --value=25";
+OCC "config:system:set updatechecker --type bool --value false";
+OCC "config:system:set check_for_working_wellknown_setup --type bool --value false";
 OCC "background:cron";
 OCC "db:convert-filecache-bigint -n";
 

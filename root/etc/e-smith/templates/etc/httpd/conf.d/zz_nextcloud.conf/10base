@@ -17,7 +17,7 @@
     </IfModule>
 
     <FilesMatch \.php$>
-      SetHandler "proxy:unix:/var/run/rh-php73-php-fpm/nethserver-nextcloud-php73.sock|fcgi://localhost"
+      SetHandler "proxy:unix:/var/run/rh-php80-php-fpm/nethserver-nextcloud-php80.sock|fcgi://localhost"
     </FilesMatch>
 
     SetEnv HOME /usr/share/nextcloud

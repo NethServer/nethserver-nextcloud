@@ -73,12 +73,12 @@ Invocation example: ::
 
 The ``occ`` command is just a wrapper around: ::
 
-  su - apache -s /bin/bash -c "source /opt/rh/rh-php73/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
+  su - apache -s /bin/bash -c "source /opt/remi/php80/enable; cd /usr/share/nextcloud/; php occ ldap:show-config"
 
-Log of rh-php73-fpm
+Log of php80-fpm
 ===================
 
-The log of rh-php73-fpm can be found at `/var/opt/rh/rh-php73/log/php-fpm/error-nextcloud.log`
+The log of php80-fpm can be found at `/opt/remi/php80/log/php-fpm/error-nextcloud.log`
 
 Cockpit API
 ===========

@@ -6,7 +6,7 @@ License: GPL
 Source0: %{name}-%{version}.tar.gz
 Source1: %{name}.tar.gz
 
-%define nc_version 23.0.8
+%define nc_version 24.0.5
 Source2: https://download.nextcloud.com/server/releases/nextcloud-%{nc_version}.tar.bz2
 
 BuildArch: noarch
@@ -18,27 +18,23 @@ Provides: nextcloud
 Obsoletes: nextcloud
 Requires: nethserver-httpd
 Requires: nethserver-rh-mariadb105 rh-mariadb105-mariadb-server-utils
-Requires: nethserver-rh-php73-php-fpm >= 1.0.0
+Requires: nethserver-remi-php80-php-fpm
 Requires: samba-client
 
 # Required php packages
-Requires: rh-php73
-Requires: rh-php73-php-fpm
-Requires: rh-php73-php-gd
-Requires: rh-php73-php-pdo
-Requires: rh-php73-php-mbstring
-Requires: rh-php73-php-imagick
+Requires: php80-php-gd
+Requires: php80-php-pdo
+Requires: php80-php-mbstring
+Requires: php80-php-imagick
 
 # Recommended php packages
-Requires: rh-php73-php-intl
-Requires: rh-php73-php-gmp
+Requires: php80-php-intl
+Requires: php80-php-gmp
+Requires: php80-php-sodium
 
 # Required php packages for specific apps
-Requires: rh-php73-php-ldap
-Requires: sclo-php73-php-smbclient
-
-# Required php packages for MariaDB
-Requires: rh-php73-php-pdo_mysql
+Requires: php80-php-ldap
+Requires:  php80-php-smbclient
 
 %description
 NethServer Nextcloud files and configuration.
@@ -80,7 +76,7 @@ mkdir -p %{buildroot}/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
 %doc COPYING
 %dir %{_nseventsdir}/%{name}-update
 %config %attr (0440,root,root) %{_sysconfdir}/sudoers.d/90_nethserver_nextcloud
-%config(noreplace) %{_sysconfdir}/opt/rh/rh-php73/php-fpm.d/000-nextcloud.conf
+%config(noreplace) %{_sysconfdir}/opt/remi/php80/php-fpm.d/000-nextcloud.conf
 %config(noreplace) %attr(0644,apache,apache) /usr/share/nextcloud/.user.ini
 %dir %attr(0755,root,apache) /usr/share/nextcloud
 %dir %attr(0755,mysql,mysql) /var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
