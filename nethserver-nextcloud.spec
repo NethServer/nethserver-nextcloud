@@ -86,7 +86,7 @@ mkdir -p %{buildroot}/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
 
 %changelog
 * Fri Nov 4 2022 Jos Gelauff <jos@gelauff.net> - 1.20.1-2
-- Nextcloud 24.0.7 - NethServer/dev##6719
+- Nextcloud 24.0.7 - NethServer/dev#6719
 
 * Wed Oct 12 2022 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.20.1-1
 - Nextcloud 24.0.6 - NethServer/dev#6706
