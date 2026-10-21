@@ -80,6 +80,45 @@ Log of php80-fpm
 
 The log of php80-fpm can be found at `/opt/remi/php80/log/php-fpm/error-nextcloud.log`
 
+PHP upload limits
+=================
+
+To mitigate the PHP vulnerabilities CVE-2026-109618 and CVE-2026-109619
+(see the `PHP advisory <https://www.php.net/archive/2026.php#2026-10-21-5>`_),
+the php-fpm pool ``/etc/opt/remi/php80/php-fpm.d/000-nextcloud.conf`` keeps the
+size of a POST request body low: ::
+
+ php_admin_value[post_max_size] = 32M
+ php_admin_value[upload_max_filesize] = 30M
+
+These limits apply only to form uploads (``multipart/form-data`` POST requests),
+like the user avatar, the theming logo and some app imports.
+Normal file uploads are not affected: the web interface, the desktop and mobile clients
+and the public upload shares send files with WebDAV ``PUT`` requests, which are not
+limited by these values.
+
+The values are set with ``php_admin_value``, so the ``/usr/share/nextcloud/.user.ini``
+file cannot raise them.
+
+If needed, the limits can be raised by hand. Keep the values at 32M or lower:
+higher values weaken the mitigation.
+
+1. Edit ``/etc/opt/remi/php80/php-fpm.d/000-nextcloud.conf`` and change the
+   ``post_max_size`` and ``upload_max_filesize`` lines; ``upload_max_filesize`` must
+   be lower than ``post_max_size``
+2. Restart php-fpm: ``systemctl restart php80-php-fpm``
+
+The file is marked as ``%config(noreplace)``, so manual changes survive package updates.
+
+If the file was already edited before the update that introduced these limits,
+the update leaves it untouched and saves the new version as
+``/etc/opt/remi/php80/php-fpm.d/000-nextcloud.conf.rpmnew``.
+In this case, add the ``post_max_size`` and ``upload_max_filesize`` lines
+to ``000-nextcloud.conf`` by hand, then restart php-fpm: ::
+
+ diff /etc/opt/remi/php80/php-fpm.d/000-nextcloud.conf /etc/opt/remi/php80/php-fpm.d/000-nextcloud.conf.rpmnew
+ systemctl restart php80-php-fpm
+
 Cockpit API
 ===========
 
