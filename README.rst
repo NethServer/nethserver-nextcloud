@@ -80,6 +80,28 @@ Log of php80-fpm
 
 The log of php80-fpm can be found at `/opt/remi/php80/log/php-fpm/error-nextcloud.log`
 
+PHP upload limits
+=================
+
+Nextcloud runs with the PHP defaults ``post_max_size = 8M`` and
+``upload_max_filesize = 2M``. They apply only to form uploads, like the user
+avatar and the theming logo: normal file uploads use WebDAV ``PUT`` requests and
+are not limited by them.
+
+Do not raise ``post_max_size`` over 32M: larger values weaken the mitigation for
+the PHP vulnerabilities CVE-2026-109618 and CVE-2026-109619
+(see the `PHP advisory <https://www.php.net/archive/2026.php#2026-10-21-5>`_).
+
+PHP-FPM workers
+===============
+
+The Nextcloud pool sets ``pm.max_requests = 1``: each PHP-FPM worker serves
+one request and is then replaced, so no state is left for the next request
+(mitigation for CVE-2026-109619). The pool file
+``/etc/opt/remi/php80/php-fpm.d/000-nextcloud.conf`` is ``%config(noreplace)``:
+if it was edited locally, the update writes the new version to
+``000-nextcloud.conf.rpmnew`` and the setting must be added by hand.
+
 Cockpit API
 ===========
 
