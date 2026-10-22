@@ -1,6 +1,6 @@
 Summary: NethServer Nextcloud configuration
 Name: nethserver-nextcloud
-Version: 1.22.5
+Version: 1.22.6
 Release: 1%{?dist}
 License: GPL
 Source0: %{name}-%{version}.tar.gz
@@ -85,6 +85,9 @@ mkdir -p %{buildroot}/var/opt/rh/rh-mariadb105/lib/mysql-nextcloud
 %attr(0775,apache,apache) /usr/share/nextcloud/data
 
 %changelog
+* Thu Oct 22 2026 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.22.6-1
+- PHP mitigations CVE-2026-109618 / CVE-2026-109619 - NethServer/dev#8256
+
 * Fri Aug 02 2024 Stephane de Labrusse <stephdl@de-labrusse.fr> - 1.22.5-1
 - Migration of Nextcloud 27.1.11 - NethServer/dev#6964
 
